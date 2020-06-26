@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/location/location_observer.dart';
 import 'package:flutterapp/location/location_service.dart';
+import 'package:flutterapp/record_activity/activity_service.dart';
 import 'package:location/location.dart';
 
 class RecordActivityWidget extends StatefulWidget {
@@ -10,6 +11,7 @@ class RecordActivityWidget extends StatefulWidget {
 
 class _RecordActivityWidgetState extends State<RecordActivityWidget> implements LocationObserver {
   var locationService = new LocationService();
+  var activityService = new ActivityService();
   String _locationField = 'Searching for location';
 
   @override
@@ -27,9 +29,10 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
 
   @override
   void onLocationChanged(LocationData locationData) {
+    activityService.addLocation(locationData);
     print('Location [ lat: ${locationData.latitude}, lng: ${locationData.longitude} ]');
     setState(() {
-      _locationField = 'Location [ lat: ${locationData.latitude}, lng: ${locationData.longitude} ]';
+      _locationField = 'Location [ lat: ${locationData.latitude}, lng: ${locationData.longitude}, distance: ${activityService.overallDistance} ]';
     });
   }
 }
