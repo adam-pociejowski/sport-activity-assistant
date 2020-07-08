@@ -5,6 +5,7 @@ import 'package:flutterapp/location/location_service.dart';
 import 'package:flutterapp/record_activity/activity_ranking.dart';
 import 'package:flutterapp/record_activity/activity_ranking_item.dart';
 import 'package:flutterapp/record_activity/activity_service.dart';
+import 'package:flutterapp/util/datetime_utils.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 
@@ -18,8 +19,6 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
   var activityService = new ActivityService();
   var apiUrl = 'https://api-sportactivity.apociejowski.pl';
   ActivityRanking _currentRanking;
-  final List<String> entries = <String>['A', 'B', 'C'];
-  final List<int> colorCodes = <int>[600, 500, 100];
   double distance = 10.14;
 
   _RecordActivityWidgetState() {
@@ -35,13 +34,17 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
       body: Center(
         child: ListView.builder(
           padding: const EdgeInsets.all(8),
-          itemCount: _currentRanking.ranking.length,
+          itemCount: _currentRanking != null ? _currentRanking.ranking.length : 0,
           itemBuilder: (BuildContext context, int index) {
             return Card(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
-                  children: <Widget>[_prepareColumn(_currentRanking.ranking[index].activityName), _prepareColumn(_currentRanking.ranking[index].timeText)],
+                  children: <Widget>[
+                    _prepareColumn((index + 1).toString(), 14, CrossAxisAlignment.start),
+                    _prepareColumn(DateTimeUtils.toDateFormat(_currentRanking.ranking[index].date), 50, CrossAxisAlignment.start),
+                    _prepareColumn(_currentRanking.ranking[index].timeText, 36, CrossAxisAlignment.end)
+                  ],
                 ),
               ),
             );
@@ -51,14 +54,15 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
     );
   }
 
-  Expanded _prepareColumn(String text) {
+  Expanded _prepareColumn(String text, int flex, CrossAxisAlignment align) {
     return Expanded(
+      flex: flex,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: align,
         children: <Widget>[
           Text(
             text,
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(fontSize: 30),
           ),
         ],
       ),
@@ -86,47 +90,12 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
       ranking.ranking.forEach((element) {
         if (ranking.ranking.indexOf(element) == 0) {
           bestResult = element;
-          element.timeText = _formatTime(bestResult.timeInSec.round());
+          element.timeText = DateTimeUtils.formatTime(bestResult.timeInSec.round());
         } else {
-          element.timeText = '+ ' + _formatTime(element.timeInSec.round() - bestResult.timeInSec.round());
+          element.timeText = '+ ' + DateTimeUtils.formatTime(element.timeInSec.round() - bestResult.timeInSec.round());
         }
       });
     }
     return ranking;
-  }
-
-  _formatTime(int timeInSec) {
-    var hours = (timeInSec ~/ 3600).toString();
-    timeInSec %= 3600;
-    var minutes = _formatMinutes(hours, timeInSec ~/ 60);
-    timeInSec %= 60;
-    var seconds = _formatSeconds(timeInSec);
-    return _prepareFinalTimeText(hours, minutes, seconds);
-  }
-
-  _formatMinutes(String hours, int minutes) {
-    if (hours == '0') {
-      return minutes.toString();
-    }
-    return minutes >= 10 ? minutes.toString() : '0' + minutes.toString();
-  }
-
-  _formatSeconds(int timeMetric) {
-    if (timeMetric >= 10) {
-      return timeMetric.toString();
-    } else if (timeMetric > 0) {
-      return '0' + timeMetric.toString();
-    }
-    return '00';
-  }
-
-  _prepareFinalTimeText(String hours, String minutes, String seconds) {
-    if (hours == '0') {
-      if (minutes == '00') {
-        return seconds;
-      }
-      return minutes + ':' + seconds;
-    }
-    return hours + ':' + minutes + ':' + seconds;
   }
 }
