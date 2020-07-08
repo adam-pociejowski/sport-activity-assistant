@@ -1,9 +1,18 @@
 import 'package:location/location.dart';
 import 'dart:math' as math;
+import 'activity_ranking.dart';
 
 class ActivityService {
   var _locations = new List<LocationData>();
+  ActivityRanking currentRanking;
   var overallDistance = 0.0;
+  var currentPosition = 1;
+  var activityStartDate = new DateTime.now();
+
+  double getActivityMovingTime() {
+    return ((new DateTime.now().millisecondsSinceEpoch - activityStartDate.millisecondsSinceEpoch) / 1000)
+        .toDouble();
+  }
 
   double addLocation(LocationData currentLocation) {
     _locations.add(currentLocation);

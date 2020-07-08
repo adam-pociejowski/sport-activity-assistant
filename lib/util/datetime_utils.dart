@@ -2,7 +2,11 @@ import 'package:intl/intl.dart';
 
 class DateTimeUtils {
   static toDateFormat(String datetime) {
-    return new DateFormat('dd/MM/yyyy').format(DateTime.parse(datetime));
+    return toDateFormatFromDate(DateTime.parse(datetime));
+  }
+
+  static toDateFormatFromDate(DateTime datetime) {
+    return new DateFormat('dd/MM/yyyy').format(datetime);
   }
 
   static formatTime(int timeInSec) {

@@ -1,10 +1,10 @@
 class ActivityRankingItem {
-  final int position;
+  int position;
   final String activityName;
   final String stravaActivityType;
   final String date;
   final double timeInSec;
-  final double avgSpeed;
+  double avgSpeed;
   bool currentResult = false;
   String timeText;
 
@@ -16,6 +16,14 @@ class ActivityRankingItem {
     this.timeInSec,
     this.avgSpeed
   });
+
+  ActivityRankingItem.current(
+    this.activityName,
+    this.stravaActivityType,
+    this.date,
+    this.timeInSec,
+    this.currentResult
+  );
 
   factory ActivityRankingItem.fromJson(Map<String, dynamic> json) {
     return ActivityRankingItem(

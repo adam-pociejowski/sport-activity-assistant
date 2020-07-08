@@ -6,6 +6,7 @@ import 'package:flutterapp/record_activity/activity_ranking.dart';
 import 'package:flutterapp/record_activity/activity_ranking_item.dart';
 import 'package:flutterapp/record_activity/activity_service.dart';
 import 'package:flutterapp/util/datetime_utils.dart';
+import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 
@@ -18,8 +19,6 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
   var locationService = new LocationService();
   var activityService = new ActivityService();
   var apiUrl = 'https://api-sportactivity.apociejowski.pl';
-  ActivityRanking _currentRanking;
-  double distance = 10.14;
 
   _RecordActivityWidgetState() {
     locationService.registerObserver(this);
@@ -32,23 +31,60 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
         title: Text('Record activity'),
       ),
       body: Center(
-        child: ListView.builder(
-          padding: const EdgeInsets.all(8),
-          itemCount: _currentRanking != null ? _currentRanking.ranking.length : 0,
-          itemBuilder: (BuildContext context, int index) {
-            return Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: <Widget>[
-                    _prepareColumn((index + 1).toString(), 14, CrossAxisAlignment.start),
-                    _prepareColumn(DateTimeUtils.toDateFormat(_currentRanking.ranking[index].date), 50, CrossAxisAlignment.start),
-                    _prepareColumn(_currentRanking.ranking[index].timeText, 36, CrossAxisAlignment.end)
-                  ],
-                ),
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.all(12.0),
+              color: Colors.grey.shade300,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 65,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(new NumberFormat("##0.00", "en_US").format(activityService.overallDistance / 1000.0).toString() + ' km', style: TextStyle(fontSize: 50)),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 35,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                            activityService.currentRanking != null ?
+                              '${activityService.currentPosition}/${activityService.currentRanking.ranking.length}' :
+                              '',
+                            style: TextStyle(fontSize: 50)),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            );
-          },
+            ),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(8),
+                itemCount: activityService.currentRanking != null ? activityService.currentRanking.ranking.length : 0,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    color: activityService.currentRanking.ranking[index].currentResult ? Colors.grey.shade300 : Colors.grey.shade50,
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: <Widget>[
+                          _prepareColumn((index + 1).toString(), 14, CrossAxisAlignment.start),
+                          _prepareColumn(DateTimeUtils.toDateFormat(activityService.currentRanking.ranking[index].date), 46, CrossAxisAlignment.start),
+                          _prepareColumn(activityService.currentRanking.ranking[index].timeText, 40, CrossAxisAlignment.end)
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -60,10 +96,7 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
       child: Column(
         crossAxisAlignment: align,
         children: <Widget>[
-          Text(
-            text,
-            style: TextStyle(fontSize: 30),
-          ),
+          Text(text, style: TextStyle(fontSize: 28)),
         ],
       ),
     );
@@ -73,15 +106,33 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
   Future<void> onLocationChanged(LocationData locationData) async {
     print('Location [ lat: ${locationData.latitude}, lng: ${locationData.longitude} ]');
     activityService.addLocation(locationData);
-    var response = await http.get(apiUrl + '/rest/activity/ranking/outdoor_ride/'+distance.toString());
+    final response = await http.get('$apiUrl/rest/activity/ranking/outdoor_ride/${activityService.overallDistance}');
     setState(() {
-      _currentRanking = _addListViewFields(_addCurrentResult(ActivityRanking.fromJson(json.decode(response.body)), new ActivityRankingItem()));
+      activityService.currentRanking = _addListViewFields(_addCurrentResult(ActivityRanking.fromJson(json.decode(response.body))));
     });
-    distance += 50.11;
+//    activityService.overallDistance = activityService.getActivityMovingTime() * 6.5;
   }
 
-  ActivityRanking _addCurrentResult(ActivityRanking ranking, ActivityRankingItem currentResult) {
+  ActivityRanking _addCurrentResult(ActivityRanking ranking) {
+    final ActivityRankingItem currentResult = new ActivityRankingItem.current(
+        DateTimeUtils.toDateFormatFromDate(new DateTime.now()),
+        'Ride',
+        activityService.activityStartDate.toIso8601String(),
+        activityService.getActivityMovingTime(),
+        true);
+    final int currentResultIndex = _getCurrentResultIndex(ranking, currentResult);
+    activityService.currentPosition = currentResultIndex + 1;
+    ranking.ranking.insert(currentResultIndex, currentResult);
     return ranking;
+  }
+
+  int _getCurrentResultIndex(ActivityRanking ranking, ActivityRankingItem currentResult) {
+    for (ActivityRankingItem item in ranking.ranking) {
+      if (item.timeInSec > currentResult.timeInSec) {
+        return ranking.ranking.indexOf(item);
+      }
+    }
+    return ranking.ranking.length;
   }
 
   ActivityRanking _addListViewFields(ActivityRanking ranking) {
