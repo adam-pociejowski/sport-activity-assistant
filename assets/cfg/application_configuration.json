@@ -1,3 +1,4 @@
 {
-  "sport-activity-api-url": "https://api-sportactivity.apociejowski.pl/rest"
+  "sport_activity_api_url": "https://api-sportactivity.apociejowski.pl/rest",
+  "min_location_accuracy_required": 20.0
 }
