@@ -7,7 +7,8 @@ import 'package:global_configuration/global_configuration.dart';
 import 'activity_ranking.dart';
 
 class ActivityService {
-  var minRequiredDistanceChange = GlobalConfiguration().getDouble("min_location_distance_change_in_meters_required");
+//  var minRequiredDistanceChange = GlobalConfiguration().getDouble("min_location_distance_change_in_meters_required");
+  var minRequiredDistanceChange = 0.0001;
   ActivityRanking currentRanking;
   var currentPosition = 1;
   ActivityModel model = new ActivityModel();
@@ -20,9 +21,9 @@ class ActivityService {
   double addLocation(LocationPoint currentLocation) {
     if (model.locations.isNotEmpty) {
       var distanceFromLastPoint = LocationUtils.getDistanceBetweenLocationsInMeters(model.locations.last, currentLocation);
-      print('distanceFromLastPoint: $distanceFromLastPoint ${currentLocation.time}');
       var isCurrentlyActivityPaused = _isCurrentlyActivityPaused();
       var hasLocationChangedSinceLastPoint = _hasLocationChangedSinceLastPoint(distanceFromLastPoint);
+      print('distanceFromLastPoint: $distanceFromLastPoint ${currentLocation.time} $isCurrentlyActivityPaused $hasLocationChangedSinceLastPoint');
       if (_isStillActivityPaused(isCurrentlyActivityPaused, hasLocationChangedSinceLastPoint)) {
         _updateActivityPause(currentLocation);
         print('still paused');

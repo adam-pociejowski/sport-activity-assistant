@@ -6,6 +6,7 @@ import 'package:flutterapp/location/location_service.dart';
 import 'package:flutterapp/activity/activity_ranking.dart';
 import 'package:flutterapp/activity/activity_ranking_item.dart';
 import 'package:flutterapp/activity/activity_service.dart';
+import 'package:flutterapp/menu/nav_drawer_widget.dart';
 import 'package:flutterapp/util/datetime_utils.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:intl/intl.dart';
@@ -33,6 +34,7 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: NavDrawerWidget(),
       appBar: AppBar(
         title: Text('Record activity'),
       ),
@@ -117,7 +119,7 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
     setState(() {
       activityService.currentRanking = _addListViewFields(_addCurrentResult(ActivityRanking.fromJson(json.decode(response.body))));
     });
-//    activityService.model.totalDistance = activityService.getActivityMovingTime() * 6.5;
+    activityService.model.totalDistance = activityService.getActivityMovingTime() * 16.5;
   }
 
   ActivityRanking _addCurrentResult(ActivityRanking ranking) {
