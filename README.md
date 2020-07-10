@@ -1,4 +1,4 @@
-# Sport result comparer app
+# Sport Activity Assistant
 A Flutter project.
 
 ## Description
