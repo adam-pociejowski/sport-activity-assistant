@@ -2,6 +2,8 @@ import 'package:flutterapp/location/location_observer.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:location/location.dart';
 
+import 'location_point.dart';
+
 class LocationService {
   var location = Location();
   var observers = new List<LocationObserver>() ;
@@ -26,8 +28,15 @@ class LocationService {
         .onLocationChanged
         .listen((locationData) {
       if (locationData.accuracy <= minLocationAccuracyRequired) {
+        var locationPoint = new LocationPoint(
+            time: DateTime.now(),
+            latitude: locationData.latitude,
+            longitude: locationData.longitude,
+            altitude: locationData.altitude,
+            accuracy: locationData.accuracy
+        );
         observers.forEach((observer) {
-          observer.onLocationChanged(locationData);
+          observer.onLocationChanged(locationPoint);
         });
       } else {
         print('Location changed rejected, accuracy worse than min accuracy required. '

@@ -1,4 +1,4 @@
-import 'package:flutterapp/record_activity/activity_ranking_item.dart';
+import 'package:flutterapp/activity/activity_ranking_item.dart';
 
 class ActivityRanking {
   final List<ActivityRankingItem> ranking;

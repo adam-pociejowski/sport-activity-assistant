@@ -1,6 +1,10 @@
 import 'package:intl/intl.dart';
 
 class DateTimeUtils {
+  static getTimeDiff(DateTime after, DateTime before) {
+    return after.millisecondsSinceEpoch - before.millisecondsSinceEpoch;
+  }
+
   static toDateFormat(String datetime) {
     return toDateFormatFromDate(DateTime.parse(datetime));
   }
