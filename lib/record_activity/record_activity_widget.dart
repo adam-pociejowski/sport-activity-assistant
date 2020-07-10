@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/location/location_observer.dart';
+import 'package:flutterapp/location/location_point.dart';
 import 'package:flutterapp/location/location_service.dart';
-import 'package:flutterapp/record_activity/activity_ranking.dart';
-import 'package:flutterapp/record_activity/activity_ranking_item.dart';
-import 'package:flutterapp/record_activity/activity_service.dart';
+import 'package:flutterapp/activity/activity_ranking.dart';
+import 'package:flutterapp/activity/activity_ranking_item.dart';
+import 'package:flutterapp/activity/activity_service.dart';
 import 'package:flutterapp/util/datetime_utils.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:intl/intl.dart';
-import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 
 class RecordActivityWidget extends StatefulWidget {
@@ -19,7 +19,7 @@ class RecordActivityWidget extends StatefulWidget {
 class _RecordActivityWidgetState extends State<RecordActivityWidget> implements LocationObserver {
   var locationService = new LocationService();
   var activityService = new ActivityService();
-  var apiUrl = GlobalConfiguration().getString("sport-activity-api-url");
+  var apiUrl = GlobalConfiguration().getString("sport_activity_api_url");
   var activityType = 'outdoor_ride';
   static var materialPalette = Colors.lime;
   var lightColor = materialPalette.shade100;
@@ -49,7 +49,7 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(new NumberFormat("##0.00", "en_US").format(activityService.overallDistance / 1000.0).toString() + ' km', style: TextStyle(fontSize: 50)),
+                        Text(new NumberFormat("##0.00", "en_US").format(activityService.model.totalDistance / 1000.0).toString() + ' km', style: TextStyle(fontSize: 50)),
                       ],
                     ),
                   ),
@@ -109,21 +109,22 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
   }
 
   @override
-  Future<void> onLocationChanged(LocationData locationData) async {
-    print('Location [ lat: ${locationData.latitude}, lng: ${locationData.longitude} ]');
-    activityService.addLocation(locationData);
-    final response = await http.get('$apiUrl/activity/ranking/$activityType/${activityService.overallDistance}');
+  Future<void> onLocationChanged(LocationPoint locationPoint) async {
+    print('Location [ lat: ${locationPoint.latitude}, lng: ${locationPoint.longitude} ]');
+    activityService.addLocation(locationPoint);
+    print('$apiUrl/activity/ranking/$activityType/${activityService.model.totalDistance}');
+    final response = await http.get('$apiUrl/activity/ranking/$activityType/${activityService.model.totalDistance}');
     setState(() {
       activityService.currentRanking = _addListViewFields(_addCurrentResult(ActivityRanking.fromJson(json.decode(response.body))));
     });
-    activityService.overallDistance = activityService.getActivityMovingTime() * 6.5;
+//    activityService.model.totalDistance = activityService.getActivityMovingTime() * 6.5;
   }
 
   ActivityRanking _addCurrentResult(ActivityRanking ranking) {
     final ActivityRankingItem currentResult = new ActivityRankingItem.current(
         DateTimeUtils.toDateFormatFromDate(new DateTime.now()),
         'Ride',
-        activityService.activityStartDate.toIso8601String(),
+        new DateTime.now().toIso8601String(),
         activityService.getActivityMovingTime(),
         true);
     final int currentResultIndex = _getCurrentResultIndex(ranking, currentResult);

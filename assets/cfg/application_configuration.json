@@ -1,4 +1,5 @@
 {
   "sport_activity_api_url": "https://api-sportactivity.apociejowski.pl/rest",
-  "min_location_accuracy_required": 20.0
+  "min_location_accuracy_required": 20.0,
+  "min_location_distance_change_in_meters_required": 1.0
 }
