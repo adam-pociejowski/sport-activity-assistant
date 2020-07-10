@@ -1,10 +1,12 @@
 import 'package:flutterapp/location/location_observer.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:location/location.dart';
 
 class LocationService {
   var location = Location();
   var observers = new List<LocationObserver>() ;
   static final LocationService _instance = new LocationService._();
+  var minLocationAccuracyRequired = GlobalConfiguration().getDouble("min_location_accuracy_required");
 
   LocationService._() {
     location
@@ -23,10 +25,13 @@ class LocationService {
     location
         .onLocationChanged
         .listen((locationData) {
-      if (locationData != null) {
+      if (locationData.accuracy <= minLocationAccuracyRequired) {
         observers.forEach((observer) {
           observer.onLocationChanged(locationData);
         });
+      } else {
+        print('Location changed rejected, accuracy worse than min accuracy required. '
+            'Actual: ${locationData.accuracy}, min required: $minLocationAccuracyRequired');
       }
     });
   }

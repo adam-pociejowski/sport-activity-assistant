@@ -6,6 +6,7 @@ import 'package:flutterapp/record_activity/activity_ranking.dart';
 import 'package:flutterapp/record_activity/activity_ranking_item.dart';
 import 'package:flutterapp/record_activity/activity_service.dart';
 import 'package:flutterapp/util/datetime_utils.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
@@ -18,7 +19,12 @@ class RecordActivityWidget extends StatefulWidget {
 class _RecordActivityWidgetState extends State<RecordActivityWidget> implements LocationObserver {
   var locationService = new LocationService();
   var activityService = new ActivityService();
-  var apiUrl = 'https://api-sportactivity.apociejowski.pl';
+  var apiUrl = GlobalConfiguration().getString("sport-activity-api-url");
+  var activityType = 'outdoor_ride';
+  static var materialPalette = Colors.lime;
+  var lightColor = materialPalette.shade100;
+  var mediumColor = materialPalette.shade300;
+  var darkColor = materialPalette.shade400;
 
   _RecordActivityWidgetState() {
     locationService.registerObserver(this);
@@ -35,7 +41,7 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
           children: <Widget>[
             Container(
               padding: const EdgeInsets.all(12.0),
-              color: Colors.grey.shade300,
+              color: mediumColor,
               child: Row(
                 children: <Widget>[
                   Expanded(
@@ -65,16 +71,16 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
             ),
             Expanded(
               child: ListView.builder(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(5.0),
                 itemCount: activityService.currentRanking != null ? activityService.currentRanking.ranking.length : 0,
                 itemBuilder: (BuildContext context, int index) {
                   return Card(
-                    color: activityService.currentRanking.ranking[index].currentResult ? Colors.grey.shade300 : Colors.grey.shade50,
+                    color: activityService.currentRanking.ranking[index].currentResult ? mediumColor : lightColor,
                     child: Container(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: <Widget>[
-                          _prepareColumn((index + 1).toString(), 14, CrossAxisAlignment.start),
+                          _prepareColumn('${(index + 1)}.', 14, CrossAxisAlignment.start),
                           _prepareColumn(DateTimeUtils.toDateFormat(activityService.currentRanking.ranking[index].date), 46, CrossAxisAlignment.start),
                           _prepareColumn(activityService.currentRanking.ranking[index].timeText, 40, CrossAxisAlignment.end)
                         ],
@@ -106,11 +112,11 @@ class _RecordActivityWidgetState extends State<RecordActivityWidget> implements 
   Future<void> onLocationChanged(LocationData locationData) async {
     print('Location [ lat: ${locationData.latitude}, lng: ${locationData.longitude} ]');
     activityService.addLocation(locationData);
-    final response = await http.get('$apiUrl/rest/activity/ranking/outdoor_ride/${activityService.overallDistance}');
+    final response = await http.get('$apiUrl/activity/ranking/$activityType/${activityService.overallDistance}');
     setState(() {
       activityService.currentRanking = _addListViewFields(_addCurrentResult(ActivityRanking.fromJson(json.decode(response.body))));
     });
-//    activityService.overallDistance = activityService.getActivityMovingTime() * 6.5;
+    activityService.overallDistance = activityService.getActivityMovingTime() * 6.5;
   }
 
   ActivityRanking _addCurrentResult(ActivityRanking ranking) {
