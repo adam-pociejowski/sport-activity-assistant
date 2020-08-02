@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/record_activity//record_activity_widget.dart';
+import 'package:flutterapp/service/compare_your_results_location_observer.dart';
+import 'package:flutterapp/widget/record_activity_widget.dart';
 import 'package:global_configuration/global_configuration.dart';
 
 void main() async {
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.white,
       ),
-      home: RecordActivityWidget(),
+      home: RecordActivityWidget(new CompareYourResultsLocationObserver()),
     );
   }
 }

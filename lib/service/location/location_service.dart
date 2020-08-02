@@ -1,13 +1,13 @@
-import 'package:flutterapp/location/location_observer.dart';
+import 'package:flutterapp/service/location/location_observer.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:location/location.dart';
-
-import 'location_point.dart';
+import '../../model/location/location_point.dart';
 
 class LocationService {
   var location = Location();
   var observers = new List<LocationObserver>() ;
-  static final LocationService _instance = new LocationService._();
+  // ignore: non_constant_identifier_names
+  static final LocationService INSTANCE = new LocationService._();
   var minLocationAccuracyRequired = GlobalConfiguration().getDouble("min_location_accuracy_required");
 
   LocationService._() {
@@ -43,10 +43,6 @@ class LocationService {
             'Actual: ${locationData.accuracy}, min required: $minLocationAccuracyRequired');
       }
     });
-  }
-
-  factory LocationService() {
-    return _instance;
   }
 
   void registerObserver(final LocationObserver locationObserver) {

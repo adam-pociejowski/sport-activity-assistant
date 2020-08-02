@@ -1,4 +1,4 @@
-import 'location_point.dart';
+import '../../model/location/location_point.dart';
 
 abstract class LocationObserver {
   void onLocationChanged(final LocationPoint locationPoint);
