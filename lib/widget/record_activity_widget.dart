@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/model/activity/record_activity_widget_model.dart';
-import 'package:flutterapp/model/ranking/activity_ranking_item_info.dart';
 import 'package:flutterapp/service/abstract_activity_location_observer.dart';
-import 'package:flutterapp/model/ranking/activity_ranking.dart';
-import 'package:flutterapp/model/ranking/activity_ranking_item.dart';
 import 'package:flutterapp/widget/nav_drawer_widget.dart';
 import 'package:flutterapp/util/datetime_utils.dart';
 import 'package:intl/intl.dart';
@@ -23,17 +20,14 @@ abstract class RecordActivityWidgetState extends State<RecordActivityWidget> {
 
 class _RecordActivityWidgetState extends RecordActivityWidgetState {
   static var materialPalette = Colors.lime;
-  RecordActivityWidgetModel _model;
+  RecordActivityWidgetModel _model = new RecordActivityWidgetModel(0.0, 0, new List<RecordActivityWidgetRankingItem>());
   var lightColor = materialPalette.shade100;
   var mediumColor = materialPalette.shade300;
   var darkColor = materialPalette.shade400;
 
-  _RecordActivityWidgetState() {
-    widget.observer.registerState(this);
-  }
-
   @override
   Widget build(BuildContext context) {
+    widget.observer.registerState(this);
     return Scaffold(
       drawer: NavDrawerWidget(),
       appBar: AppBar(
@@ -112,41 +106,5 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
         ],
       ),
     );
-  }
-
-  ActivityRanking _addCurrentResult(ActivityRanking ranking) {
-    final ActivityRankingItem currentResult = new ActivityRankingItem.current(
-        new ActivityRankingItemInfo('Ride', DateTimeUtils.toDateFormatFromDate(new DateTime.now())),
-        'Ride',
-        playerActivityService.getActivityMovingTime(),
-        true);
-    final int currentResultIndex = _getCurrentResultIndex(ranking, currentResult);
-    playerActivityService.currentPosition = currentResultIndex + 1;
-    ranking.ranking.insert(currentResultIndex, currentResult);
-    return ranking;
-  }
-
-  int _getCurrentResultIndex(ActivityRanking ranking, ActivityRankingItem currentResult) {
-    for (ActivityRankingItem item in ranking.ranking) {
-      if (item.timeInSec > currentResult.timeInSec) {
-        return ranking.ranking.indexOf(item);
-      }
-    }
-    return ranking.ranking.length;
-  }
-
-  ActivityRanking _addListViewFields(ActivityRanking ranking) {
-    if (ranking.ranking.length > 0) {
-      var bestResult;
-      ranking.ranking.forEach((element) {
-        if (ranking.ranking.indexOf(element) == 0) {
-          bestResult = element;
-          element.timeText = DateTimeUtils.formatTime(bestResult.timeInSec.round());
-        } else {
-          element.timeText = '+ ' + DateTimeUtils.formatTime(element.timeInSec.round() - bestResult.timeInSec.round());
-        }
-      });
-    }
-    return ranking;
   }
 }

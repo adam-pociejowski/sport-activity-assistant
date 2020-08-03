@@ -5,11 +5,11 @@ part 'activity_ranking.g.dart';
 @JsonSerializable()
 class ActivityRanking {
   final List<ActivityRankingItem> ranking;
-  final String activityType;
+  final double distance;
 
   ActivityRanking({
     this.ranking,
-    this.activityType
+    this.distance
   });
 
   factory ActivityRanking.fromJson(Map<String, dynamic> json) => _$ActivityRankingFromJson(json);

@@ -1,5 +1,5 @@
 class RecordActivityWidgetModel {
-  final int currentDistanceInKm;
+  final double currentDistanceInKm;
   final int currentPlayerPosition;
   final List<RecordActivityWidgetRankingItem> ranking;
 

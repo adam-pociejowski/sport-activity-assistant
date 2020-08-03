@@ -4,25 +4,14 @@ part 'activity_ranking_item.g.dart';
 
 @JsonSerializable()
 class ActivityRankingItem {
-  int position;
   final ActivityRankingItemInfo info;
   final String activityType;
   final double timeInSec;
-  bool currentResult = false;
-  String timeText;
 
-  ActivityRankingItem({
-    this.position,
+  ActivityRankingItem(
     this.info,
     this.activityType,
-    this.timeInSec,
-  });
-
-  ActivityRankingItem.current(
-    this.info,
-    this.activityType,
-    this.timeInSec,
-    this.currentResult
+    this.timeInSec
   );
 
   factory ActivityRankingItem.fromJson(Map<String, dynamic> json) => _$ActivityRankingItemFromJson(json);
