@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/model/activity/record_activity_widget_model.dart';
 import 'package:flutterapp/service/abstract_activity_location_observer.dart';
 import 'package:flutterapp/widget/nav_drawer_widget.dart';
-import 'package:flutterapp/util/datetime_utils.dart';
 import 'package:intl/intl.dart';
 
 class RecordActivityWidget extends StatefulWidget {
@@ -28,6 +27,7 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
   @override
   Widget build(BuildContext context) {
     widget.observer.registerState(this);
+    widget.observer.init();
     return Scaffold(
       drawer: NavDrawerWidget(),
       appBar: AppBar(
@@ -37,7 +37,7 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
         child: Column(
           children: <Widget>[
             Container(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(10.0),
               color: mediumColor,
               child: Row(
                 children: <Widget>[
@@ -71,12 +71,12 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
                   return Card(
                     color: item.isPlayerResult ? mediumColor : lightColor,
                     child: Container(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(6.0),
                       child: Row(
                         children: <Widget>[
-                          _prepareColumn('${(index + 1)}.', 14, CrossAxisAlignment.start),
-                          _prepareColumn(DateTimeUtils.toDateFormat(item.name), 46, CrossAxisAlignment.start),
-                          _prepareColumn(item.timeText, 40, CrossAxisAlignment.end)
+                          _prepareColumn('${(index + 1)}.', 10, CrossAxisAlignment.start),
+                          _prepareColumn(item.name, 52, CrossAxisAlignment.start),
+                          _prepareColumn(item.timeText, 38, CrossAxisAlignment.end)
                         ],
                       ),
                     ),
@@ -102,7 +102,7 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
       child: Column(
         crossAxisAlignment: align,
         children: <Widget>[
-          Text(text, style: TextStyle(fontSize: 28)),
+          Text(text, style: TextStyle(fontSize: 24)),
         ],
       ),
     );

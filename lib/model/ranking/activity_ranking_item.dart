@@ -1,10 +1,10 @@
+import 'package:flutterapp/enums/activity_type.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'activity_ranking_item_info.dart';
 part 'activity_ranking_item.g.dart';
 
 @JsonSerializable()
 class ActivityRankingItem {
-  final ActivityRankingItemInfo info;
+  final Map<String, dynamic> info;
   final String activityType;
   final double timeInSec;
 
