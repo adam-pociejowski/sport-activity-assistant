@@ -24,10 +24,13 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
   var mediumColor = materialPalette.shade300;
   var darkColor = materialPalette.shade400;
 
+  void initState() {
+    super.initState();
+    widget.observer.init(this);
+  }
+
   @override
   Widget build(BuildContext context) {
-    widget.observer.registerState(this);
-    widget.observer.init();
     return Scaffold(
       drawer: NavDrawerWidget(),
       appBar: AppBar(

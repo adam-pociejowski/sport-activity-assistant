@@ -24,7 +24,10 @@ abstract class AbstractActivityLocationObserver implements LocationObserver {
 
   RecordActivityWidgetModel mapToModel(String responseJson);
 
-  void init();
+  @mustCallSuper
+  void init(State state) {
+    this.state = state;
+  }
 
   void afterLocationChanged(LocationPoint locationPoint);
 
@@ -33,17 +36,8 @@ abstract class AbstractActivityLocationObserver implements LocationObserver {
   List<RankingItem> mapToRankingItems(String responseJson);
 
   Future<void> onLocationChanged(LocationPoint locationPoint) async {
-    print('Location [ lat: ${locationPoint.latitude}, lng: ${locationPoint.longitude} ]');
     playerActivityService.addLocation(locationPoint);
     this.afterLocationChanged(locationPoint);
-  }
-
-  void registerState(State state) {
-    this.state = state;
-  }
-
-  void unRegisterState(State state) {
-    this.state = null;
   }
 
   void updateState(RecordActivityWidgetModel model) {

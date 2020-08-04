@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/widgets.dart';
 import 'package:flutterapp/enums/activity_type.dart';
 import 'package:flutterapp/enums/ranking_item_race_event_type.dart';
 import 'package:flutterapp/model/activity/record_activity_widget_model.dart';
@@ -13,8 +14,8 @@ import 'package:flutterapp/util/htttp_utils.dart';
 class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
   RaceConfig raceConfig;
 
-  Future<void> init() async {
-    print('SimulateRaceLocationObserver initialized');
+  Future<void> init(State state) async {
+    super.init(state);
     this.raceConfig = RaceConfig
         .fromJson(
         json
@@ -23,19 +24,20 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
                 '$apiUrl/race/init',
                 new RaceInitRequest(
                     name: 'Race',
-                    difficulty: 0.5,
+                    difficulty: 0.45,
                     stagesDistance: [ 1000.12 ],
-                    ridersAmount: 10,
+                    ridersAmount: 16,
                     showMyResults: false,
                     activityType: ActivityType.OUTDOOR_RIDE.toString(),
-                    raceConditionMin: 0.95,
-                    raceConditionMax: 1.0
+                    riderRaceConditionVariability: 0.05,
+                    riderCurrentConditionVariability: 0.1,
+                    maxRiderCurrentConditionChangePerEvent: 0.01,
+                    randomFactorVariability: 0.01
                 )))));
   }
 
   Future<void> afterLocationChanged(LocationPoint locationPoint) async {
-    print('$apiUrl/race/update, distance: ${playerActivityService.model.totalDistance}');
-    playerActivityService.model.totalDistance += 100.0;
+    print('$apiUrl/race/update, distance: ${playerActivityService.model.totalDistance}, raceId: ${this.raceConfig.raceId}');
     this.updateState(
         mapToModel(
           (await HttpUtils.post(

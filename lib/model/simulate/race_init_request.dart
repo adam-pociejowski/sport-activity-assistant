@@ -5,8 +5,10 @@ class RaceInitRequest {
   final int ridersAmount;
   final bool showMyResults;
   final String activityType;
-  final double raceConditionMin;
-  final double raceConditionMax;
+  final double riderRaceConditionVariability;
+  final double riderCurrentConditionVariability;
+  final double maxRiderCurrentConditionChangePerEvent;
+  final double randomFactorVariability;
 
   RaceInitRequest({
     this.name,
@@ -15,8 +17,10 @@ class RaceInitRequest {
     this.ridersAmount,
     this.showMyResults,
     this.activityType,
-    this.raceConditionMin,
-    this.raceConditionMax
+    this.riderRaceConditionVariability,
+    this.riderCurrentConditionVariability,
+    this.maxRiderCurrentConditionChangePerEvent,
+    this.randomFactorVariability
   });
 
   Map<String, dynamic> toJson() {
@@ -27,8 +31,10 @@ class RaceInitRequest {
       "stagesDistance": this.stagesDistance,
       "showMyResults": this.showMyResults,
       "activityType": this.activityType,
-      "raceConditionMin": this.raceConditionMin,
-      "raceConditionMax": this.raceConditionMax,
+      "riderRaceConditionVariability": this.riderRaceConditionVariability,
+      "riderCurrentConditionVariability": this.riderCurrentConditionVariability,
+      "maxRiderCurrentConditionChangePerEvent": this.maxRiderCurrentConditionChangePerEvent,
+      "randomFactorVariability": this.randomFactorVariability
     };
   }
 }

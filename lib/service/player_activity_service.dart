@@ -8,7 +8,6 @@ import '../model/ranking/activity_ranking.dart';
 
 class PlayerActivityService {
   var minRequiredDistanceChange = GlobalConfiguration().getDouble("min_location_distance_change_in_meters_required");
-//  var minRequiredDistanceChange = 0.0001;
   ActivityRanking currentRanking;
   var currentPosition = 1;
   ActivityModel model = new ActivityModel();
@@ -23,14 +22,11 @@ class PlayerActivityService {
       var distanceFromLastPoint = LocationUtils.getDistanceBetweenLocationsInMeters(model.locations.last, currentLocation);
       var isCurrentlyActivityPaused = _isCurrentlyActivityPaused();
       var hasLocationChangedSinceLastPoint = _hasLocationChangedSinceLastPoint(distanceFromLastPoint);
-      print('distanceFromLastPoint: $distanceFromLastPoint ${currentLocation.time} $isCurrentlyActivityPaused $hasLocationChangedSinceLastPoint');
       if (_isStillActivityPaused(isCurrentlyActivityPaused, hasLocationChangedSinceLastPoint)) {
         _updateActivityPause(currentLocation);
-        print('still paused');
       } else if (_isActivityPauseStarted(isCurrentlyActivityPaused, hasLocationChangedSinceLastPoint)) {
         model.pauses.add(new ActivityPause());
         _updateActivityPause(currentLocation);
-        print('start of pause');
       } else {
         model.totalDistance += distanceFromLastPoint;
       }

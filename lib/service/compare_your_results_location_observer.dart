@@ -9,10 +9,6 @@ import 'package:http/http.dart' as http;
 
 class CompareYourResultsLocationObserver extends AbstractActivityLocationObserver {
 
-  void init() {
-    print('Observer initialized');
-  }
-
   Future<void> afterLocationChanged(LocationPoint locationPoint) async {
     print('$apiUrl/activity/ranking/$activityType/${playerActivityService.model.totalDistance}');
     playerActivityService.model.totalDistance += 100.0;
