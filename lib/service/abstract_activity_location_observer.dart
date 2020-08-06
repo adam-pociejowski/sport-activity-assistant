@@ -53,6 +53,7 @@ abstract class AbstractActivityLocationObserver implements LocationObserver {
         item.activityType,
         item.isPlayerResult,
         formatToLostTimeText(rankingItems[0], item),
+        item.country,
         item.name))
         .toList();
   }
@@ -76,7 +77,7 @@ class RankingItem {
     this.activityType,
     this.name,
     this.type = RankingItemRaceEventType.NPC,
-    this.country = "",
+    this.country = "POL",
     this.timeInSec,
     this.isPlayerResult});
 }

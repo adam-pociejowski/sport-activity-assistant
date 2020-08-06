@@ -16,47 +16,32 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
 
   Future<void> init(State state) async {
     super.init(state);
-    this.raceConfig = RaceConfig
-        .fromJson(
-        json
-            .decode(
-            (await HttpUtils.post(
-                '$apiUrl/race/init',
-                new RaceInitRequest(
-                    name: 'Race',
-                    difficulty: 0.45,
-                    stagesDistance: [ 1000.12 ],
-                    ridersAmount: 16,
-                    showMyResults: false,
-                    activityType: ActivityType.OUTDOOR_RIDE.toString(),
-                    riderRaceConditionVariability: 0.05,
-                    riderCurrentConditionVariability: 0.1,
-                    maxRiderCurrentConditionChangePerEvent: 0.01,
-                    randomFactorVariability: 0.01
-                )))));
+    this.raceConfig = RaceConfig.fromJson(json.decode((await HttpUtils.post(
+        '$apiUrl/race/init',
+        new RaceInitRequest(
+            name: 'Race',
+            difficulty: 0.45,
+            stagesDistance: [1000.12],
+            ridersAmount: 16,
+            showMyResults: false,
+            activityType: ActivityType.OUTDOOR_RIDE.toString(),
+            riderRaceConditionVariability: 0.05,
+            riderCurrentConditionVariability: 0.1,
+            maxRiderCurrentConditionChangePerEvent: 0.01,
+            randomFactorVariability: 0.01)))));
   }
 
   Future<void> afterLocationChanged(LocationPoint locationPoint) async {
     print('$apiUrl/race/update, distance: ${playerActivityService.model.totalDistance}, raceId: ${this.raceConfig.raceId}');
-    this.updateState(
-        mapToModel(
-          (await HttpUtils.post(
-              '$apiUrl/race/update',
-              new UpdateRaceRequest(
-                  raceId: this.raceConfig.raceId,
-                  stageId: null,
-                  location: locationPoint,
-                  time: playerActivityService.getActivityMovingTime(),
-                  distance: playerActivityService.model.totalDistance
-              )))));
+//    playerActivityService.model.totalDistance += 100.0;
+    this.updateState(mapToModel((await HttpUtils.post(
+        '$apiUrl/race/update',
+        new UpdateRaceRequest(
+            raceId: this.raceConfig.raceId, stageId: null, location: locationPoint, time: playerActivityService.getActivityMovingTime(), distance: playerActivityService.model.totalDistance)))));
   }
 
   RecordActivityWidgetModel mapToModel(String responseJson) {
-    return new RecordActivityWidgetModel(
-        playerActivityService.model.totalDistance / 1000.0,
-        playerActivityService.currentPosition,
-        prepareSortedRankingItems(responseJson)
-    );
+    return new RecordActivityWidgetModel(playerActivityService.model.totalDistance / 1000.0, playerActivityService.currentPosition, prepareSortedRankingItems(responseJson));
   }
 
   List<RankingItem> afterRankingMap(List<RankingItem> rankingItems) {
@@ -64,18 +49,15 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
   }
 
   List<RankingItem> mapToRankingItems(String responseJson) {
-    return ActivityRanking
-        .fromJson(json.decode(responseJson))
+    return ActivityRanking.fromJson(json.decode(responseJson))
         .ranking
-        .map((item) =>
-            new RankingItem(
-                activityType: ActivityType.findByName(item.activityType),
-                name: item.info['name'],
-                type: RankingItemRaceEventType.findByName(item.info['type']),
-                country: item.info['country'],
-                timeInSec: item.timeInSec,
-                isPlayerResult: RankingItemRaceEventType.findByName(item.info['type']) == RankingItemRaceEventType.USER_ACTIVITY
-            ))
+        .map((item) => new RankingItem(
+            activityType: ActivityType.findByName(item.activityType),
+            name: item.info['name'],
+            type: RankingItemRaceEventType.findByName(item.info['type']),
+            country: item.info['country'],
+            timeInSec: item.timeInSec,
+            isPlayerResult: RankingItemRaceEventType.findByName(item.info['type']) == RankingItemRaceEventType.USER_ACTIVITY))
         .toList();
   }
 }

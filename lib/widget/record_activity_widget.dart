@@ -78,8 +78,9 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
                       child: Row(
                         children: <Widget>[
                           _prepareColumn('${(index + 1)}.', 10, CrossAxisAlignment.start),
-                          _prepareColumn(item.name, 52, CrossAxisAlignment.start),
-                          _prepareColumn(item.timeText, 38, CrossAxisAlignment.end)
+                          _prepareFlagImage(item.country, 10, CrossAxisAlignment.start),
+                          _prepareColumn(item.name, 50, CrossAxisAlignment.start),
+                          _prepareColumn(item.timeText, 34, CrossAxisAlignment.end)
                         ],
                       ),
                     ),
@@ -99,13 +100,30 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
     });
   }
 
+  Expanded _prepareFlagImage(String country, int flex, CrossAxisAlignment align) {
+    return Expanded(
+      flex: flex,
+      child: Column(
+        crossAxisAlignment: align,
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.only(left: 2.0, right: 6.0),
+            child: Image(
+              image: AssetImage("assets/images/flags_light/$country.png"),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Expanded _prepareColumn(String text, int flex, CrossAxisAlignment align) {
     return Expanded(
       flex: flex,
       child: Column(
         crossAxisAlignment: align,
         children: <Widget>[
-          Text(text, style: TextStyle(fontSize: 24)),
+          Text(text, style: TextStyle(fontSize: 23)),
         ],
       ),
     );

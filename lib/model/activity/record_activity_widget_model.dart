@@ -15,11 +15,13 @@ class RecordActivityWidgetRankingItem {
   final ActivityType activityType;
   final bool isPlayerResult;
   final String timeText;
+  final String country;
   final String name;
 
   RecordActivityWidgetRankingItem(
       this.activityType,
       this.isPlayerResult,
       this.timeText,
+      this.country,
       this.name);
 }
