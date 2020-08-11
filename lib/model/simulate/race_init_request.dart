@@ -1,7 +1,9 @@
+import 'package:flutterapp/model/simulate/stage.dart';
+
 class RaceInitRequest {
   final String name;
   final double difficulty;
-  final List<double> stagesDistance;
+  final List<Stage> stages;
   final int ridersAmount;
   final bool showMyResults;
   final String activityType;
@@ -9,18 +11,20 @@ class RaceInitRequest {
   final double riderCurrentConditionVariability;
   final double maxRiderCurrentConditionChangePerEvent;
   final double randomFactorVariability;
+  final double resultsScattering;
 
   RaceInitRequest({
     this.name,
     this.difficulty,
-    this.stagesDistance,
+    this.stages,
     this.ridersAmount,
     this.showMyResults,
     this.activityType,
     this.riderRaceConditionVariability,
     this.riderCurrentConditionVariability,
     this.maxRiderCurrentConditionChangePerEvent,
-    this.randomFactorVariability
+    this.randomFactorVariability,
+    this.resultsScattering
   });
 
   Map<String, dynamic> toJson() {
@@ -28,13 +32,24 @@ class RaceInitRequest {
       "name": this.name,
       "difficulty": this.difficulty,
       "ridersAmount": this.ridersAmount,
-      "stagesDistance": this.stagesDistance,
+      "stages": this.stages
+        .map((stage) => {
+          "distance": stage.distance,
+          "abilitiesFactor": {
+            "flat": stage.abilitiesFactor.flat,
+            "mountain": stage.abilitiesFactor.mountain,
+            "hill": stage.abilitiesFactor.hill,
+            "timeTrial": stage.abilitiesFactor.timeTrial,
+          },
+          "activityType": stage.activityType.toString(),
+        }).toList(),
       "showMyResults": this.showMyResults,
       "activityType": this.activityType,
       "riderRaceConditionVariability": this.riderRaceConditionVariability,
       "riderCurrentConditionVariability": this.riderCurrentConditionVariability,
       "maxRiderCurrentConditionChangePerEvent": this.maxRiderCurrentConditionChangePerEvent,
-      "randomFactorVariability": this.randomFactorVariability
+      "randomFactorVariability": this.randomFactorVariability,
+      "resultsScattering": this.resultsScattering
     };
   }
 }

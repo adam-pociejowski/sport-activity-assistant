@@ -8,6 +8,7 @@ import 'package:flutterapp/service/player_activity_service.dart';
 import 'package:flutterapp/util/datetime_utils.dart';
 import 'package:flutterapp/widget/record_activity_widget.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:intl/intl.dart';
 import 'location/location_service.dart';
 
 abstract class AbstractActivityLocationObserver implements LocationObserver {
@@ -53,6 +54,7 @@ abstract class AbstractActivityLocationObserver implements LocationObserver {
         item.activityType,
         item.isPlayerResult,
         formatToLostTimeText(rankingItems[0], item),
+        new NumberFormat("##0.00", "en_US").format(item.power).toString(),
         item.country,
         item.name))
         .toList();
@@ -70,6 +72,7 @@ class RankingItem {
   final String name;
   final RankingItemRaceEventType type;
   final String country;
+  final double power;
   final double timeInSec;
   final bool isPlayerResult;
 
@@ -78,6 +81,7 @@ class RankingItem {
     this.name,
     this.type = RankingItemRaceEventType.NPC,
     this.country = "POL",
+    this.power = 1.0,
     this.timeInSec,
     this.isPlayerResult});
 }

@@ -15,6 +15,7 @@ class RecordActivityWidgetRankingItem {
   final ActivityType activityType;
   final bool isPlayerResult;
   final String timeText;
+  final String power;
   final String country;
   final String name;
 
@@ -22,6 +23,7 @@ class RecordActivityWidgetRankingItem {
       this.activityType,
       this.isPlayerResult,
       this.timeText,
+      this.power,
       this.country,
       this.name);
 }

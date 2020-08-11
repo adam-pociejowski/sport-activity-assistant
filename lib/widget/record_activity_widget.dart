@@ -78,9 +78,10 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
                       child: Row(
                         children: <Widget>[
                           _prepareColumn('${(index + 1)}.', 10, CrossAxisAlignment.start),
-                          _prepareFlagImage(item.country, 10, CrossAxisAlignment.start),
-                          _prepareColumn(item.name, 50, CrossAxisAlignment.start),
-                          _prepareColumn(item.timeText, 34, CrossAxisAlignment.end)
+                          _prepareFlagImage(item.country, 8, CrossAxisAlignment.start),
+                          _prepareColumn(item.name, 46, CrossAxisAlignment.start),
+                          _prepareColumn(item.power.toString(), 12, CrossAxisAlignment.start),
+                          _prepareColumn(item.timeText, 24, CrossAxisAlignment.end)
                         ],
                       ),
                     ),
@@ -123,7 +124,7 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
       child: Column(
         crossAxisAlignment: align,
         children: <Widget>[
-          Text(text, style: TextStyle(fontSize: 23)),
+          Text(text, style: TextStyle(fontSize: 22)),
         ],
       ),
     );
