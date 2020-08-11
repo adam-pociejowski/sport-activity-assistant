@@ -1,5 +1,5 @@
-import 'package:flutterapp/activity/activity_pause.dart';
-import 'package:flutterapp/location/location_point.dart';
+import 'package:flutterapp/model/activity/activity_pause.dart';
+import 'package:flutterapp/model/location/location_point.dart';
 
 class ActivityModel {
   int totalPauseTime = 0;

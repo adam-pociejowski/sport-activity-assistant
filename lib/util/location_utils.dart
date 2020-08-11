@@ -1,5 +1,5 @@
 import 'dart:math' as math;
-import 'location_point.dart';
+import '../model/location/location_point.dart';
 
 class LocationUtils {
 
