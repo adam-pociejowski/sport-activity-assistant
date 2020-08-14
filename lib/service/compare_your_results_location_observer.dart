@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutterapp/enums/activity_type.dart';
+import 'package:flutterapp/enums/ranking_item_race_event_type.dart';
 import 'package:flutterapp/model/activity/record_activity_widget_model.dart';
 import 'package:flutterapp/model/location/location_point.dart';
 import 'package:flutterapp/model/ranking/activity_ranking.dart';
@@ -18,7 +19,7 @@ class CompareYourResultsLocationObserver extends AbstractActivityLocationObserve
   RecordActivityWidgetModel mapToModel(String responseJson) {
     return new RecordActivityWidgetModel(
         playerActivityService.model.totalDistance / 1000.0,
-        playerActivityService.currentPosition,
+        1,
         prepareSortedRankingItems(responseJson)
     );
   }
@@ -28,7 +29,7 @@ class CompareYourResultsLocationObserver extends AbstractActivityLocationObserve
         activityType: ActivityType.OUTDOOR_RIDE,
         name: DateTime.now().toString(),
         timeInSec: playerActivityService.getActivityMovingTime(),
-        isPlayerResult: true
+        type: RankingItemRaceEventType.USER_ACTIVITY
     ));
     return rankingItems;
   }
@@ -39,10 +40,10 @@ class CompareYourResultsLocationObserver extends AbstractActivityLocationObserve
         .ranking
         .map((item) =>
             new RankingItem(
-              activityType: ActivityType.findByName(item.activityType),
-              name: DateTimeUtils.toDateFormat(item.info['date']),
-              timeInSec: item.timeInSec,
-              isPlayerResult: false
+               activityType: ActivityType.findByName(item.activityType),
+                name: DateTimeUtils.toDateFormat(item.info['date']),
+                timeInSec: item.timeInSec,
+                type: RankingItemRaceEventType.NPC
             ))
         .toList();
   }

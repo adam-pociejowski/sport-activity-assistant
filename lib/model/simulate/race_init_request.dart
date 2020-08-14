@@ -5,7 +5,6 @@ class RaceInitRequest {
   final double difficulty;
   final List<Stage> stages;
   final int ridersAmount;
-  final bool showMyResults;
   final String activityType;
   final double riderRaceConditionVariability;
   final double riderCurrentConditionVariability;
@@ -18,7 +17,6 @@ class RaceInitRequest {
     this.difficulty,
     this.stages,
     this.ridersAmount,
-    this.showMyResults,
     this.activityType,
     this.riderRaceConditionVariability,
     this.riderCurrentConditionVariability,
@@ -43,7 +41,6 @@ class RaceInitRequest {
           },
           "activityType": stage.activityType.toString(),
         }).toList(),
-      "showMyResults": this.showMyResults,
       "activityType": this.activityType,
       "riderRaceConditionVariability": this.riderRaceConditionVariability,
       "riderCurrentConditionVariability": this.riderCurrentConditionVariability,

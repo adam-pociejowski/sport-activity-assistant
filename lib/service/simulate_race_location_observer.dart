@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:flutterapp/enums/activity_type.dart';
 import 'package:flutterapp/enums/ranking_item_race_event_type.dart';
+import 'package:flutterapp/enums/ranking_type.dart';
 import 'package:flutterapp/model/activity/record_activity_widget_model.dart';
 import 'package:flutterapp/model/location/location_point.dart';
 import 'package:flutterapp/model/ranking/activity_ranking.dart';
@@ -25,24 +26,23 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
             difficulty: 0.45,
             stages: [
               new Stage(
-                distance: 12.2,
+                distance: 10000.2,
                 abilitiesFactor: new RiderAbilities(
-                  flat: 0.0,
-                  mountain: 4.0,
-                  hill: 0.0,
-                  timeTrial: 0.0,
+                  flat: 1.0,
+                  mountain: 1.0,
+                  hill: 1.0,
+                  timeTrial: 1.0,
                 ),
                 activityType: ActivityType.OUTDOOR_RIDE,
               ),
             ],
             ridersAmount: 100,
-            showMyResults: false,
             activityType: ActivityType.OUTDOOR_RIDE.toString(),
-            riderRaceConditionVariability: 0.05,
-            riderCurrentConditionVariability: 0.2,
+            riderRaceConditionVariability: 0.1,
+            riderCurrentConditionVariability: 0.25,
             maxRiderCurrentConditionChangePerEvent: 0.02,
             randomFactorVariability: 0.02,
-            resultsScattering: 2.0)))));
+            resultsScattering: 1.5)))));
   }
 
   Future<void> afterLocationChanged(LocationPoint locationPoint) async {
@@ -57,11 +57,18 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
             stageId: this.raceConfig.stages[0].stageId,
             location: locationPoint,
             time: playerActivityService.getActivityMovingTime(),
-            distance: playerActivityService.model.totalDistance)))));
+            distance: playerActivityService.model.totalDistance,
+            rankingType: RankingType.PLAYER_NPC_WITH_HISTORY)))));
   }
 
   RecordActivityWidgetModel mapToModel(String responseJson) {
-    return new RecordActivityWidgetModel(playerActivityService.model.totalDistance / 1000.0, playerActivityService.currentPosition, prepareSortedRankingItems(responseJson));
+    List<RecordActivityWidgetRankingItem> ranking = prepareSortedRankingItems(responseJson);
+    RecordActivityWidgetRankingItem playerItem = ranking
+        .firstWhere((item) => item.itemType == RankingItemRaceEventType.USER_ACTIVITY);
+    return new RecordActivityWidgetModel(
+        playerActivityService.model.totalDistance / 1000.0,
+        playerItem == null ? 1 : ranking.indexOf(playerItem) + 1,
+        ranking);
   }
 
   List<RankingItem> afterRankingMap(List<RankingItem> rankingItems) {
@@ -77,8 +84,7 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
             type: RankingItemRaceEventType.findByName(item.info['type']),
             country: item.info['country'],
             power: item.info['power'],
-            timeInSec: item.timeInSec,
-            isPlayerResult: RankingItemRaceEventType.findByName(item.info['type']) == RankingItemRaceEventType.USER_ACTIVITY))
+            timeInSec: item.timeInSec))
         .toList();
   }
 }

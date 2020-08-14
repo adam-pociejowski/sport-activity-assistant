@@ -1,4 +1,5 @@
 import 'package:flutterapp/enums/activity_type.dart';
+import 'package:flutterapp/enums/ranking_item_race_event_type.dart';
 
 class RecordActivityWidgetModel {
   final double currentDistanceInKm;
@@ -13,7 +14,7 @@ class RecordActivityWidgetModel {
 
 class RecordActivityWidgetRankingItem {
   final ActivityType activityType;
-  final bool isPlayerResult;
+  final RankingItemRaceEventType itemType;
   final String timeText;
   final String power;
   final String country;
@@ -21,7 +22,7 @@ class RecordActivityWidgetRankingItem {
 
   RecordActivityWidgetRankingItem(
       this.activityType,
-      this.isPlayerResult,
+      this.itemType,
       this.timeText,
       this.power,
       this.country,

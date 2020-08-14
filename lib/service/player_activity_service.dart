@@ -4,12 +4,9 @@ import 'package:flutterapp/model/location/location_point.dart';
 import 'package:flutterapp/util/location_utils.dart';
 import 'package:flutterapp/util/datetime_utils.dart';
 import 'package:global_configuration/global_configuration.dart';
-import '../model/ranking/activity_ranking.dart';
 
 class PlayerActivityService {
   var minRequiredDistanceChange = GlobalConfiguration().getDouble("min_location_distance_change_in_meters_required");
-  ActivityRanking currentRanking;
-  var currentPosition = 1;
   ActivityModel model = new ActivityModel();
 
   double getActivityMovingTime() {

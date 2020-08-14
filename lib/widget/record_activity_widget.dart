@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/enums/ranking_item_race_event_type.dart';
 import 'package:flutterapp/model/activity/record_activity_widget_model.dart';
 import 'package:flutterapp/service/abstract_activity_location_observer.dart';
 import 'package:flutterapp/widget/nav_drawer_widget.dart';
@@ -20,9 +21,10 @@ abstract class RecordActivityWidgetState extends State<RecordActivityWidget> {
 class _RecordActivityWidgetState extends RecordActivityWidgetState {
   static var materialPalette = Colors.lime;
   RecordActivityWidgetModel _model = new RecordActivityWidgetModel(0.0, 0, new List<RecordActivityWidgetRankingItem>());
-  var lightColor = materialPalette.shade100;
-  var mediumColor = materialPalette.shade300;
-  var darkColor = materialPalette.shade400;
+  var shade100Color = materialPalette.shade100;
+  var shade200Color = materialPalette.shade200;
+  var shade300Color = materialPalette.shade300;
+  var shade400Color = materialPalette.shade400;
 
   void initState() {
     super.initState();
@@ -41,7 +43,7 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
           children: <Widget>[
             Container(
               padding: const EdgeInsets.all(10.0),
-              color: mediumColor,
+              color: shade300Color,
               child: Row(
                 children: <Widget>[
                   Expanded(
@@ -72,7 +74,7 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
                 itemBuilder: (BuildContext context, int index) {
                   final RecordActivityWidgetRankingItem item = _model.ranking[index];
                   return Card(
-                    color: item.isPlayerResult ? mediumColor : lightColor,
+                    color: _decideWhichItemColor(item.itemType),
                     child: Container(
                       padding: const EdgeInsets.all(6.0),
                       child: Row(
@@ -99,6 +101,17 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
     setState(() {
       _model = model;
     });
+  }
+
+  Color _decideWhichItemColor(RankingItemRaceEventType type) {
+    switch (type) {
+      case RankingItemRaceEventType.USER_ACTIVITY:
+        return shade300Color;
+      case RankingItemRaceEventType.USER_OLD_ACTIVITY:
+        return shade200Color;
+      default:
+        return shade100Color;
+    }
   }
 
   Expanded _prepareFlagImage(String country, int flex, CrossAxisAlignment align) {

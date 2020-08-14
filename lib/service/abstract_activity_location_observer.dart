@@ -50,13 +50,13 @@ abstract class AbstractActivityLocationObserver implements LocationObserver {
     rankingItems.sort((RankingItem o1, RankingItem o2) => o1.timeInSec.compareTo(o2.timeInSec));
     return rankingItems
         .map((item) =>
-    new RecordActivityWidgetRankingItem(
-        item.activityType,
-        item.isPlayerResult,
-        formatToLostTimeText(rankingItems[0], item),
-        new NumberFormat("##0.00", "en_US").format(item.power).toString(),
-        item.country,
-        item.name))
+          new RecordActivityWidgetRankingItem(
+              item.activityType,
+              item.type,
+              formatToLostTimeText(rankingItems[0], item),
+              new NumberFormat("##0.00", "en_US").format(item.power).toString(),
+              item.country,
+              item.name))
         .toList();
   }
 
@@ -74,7 +74,6 @@ class RankingItem {
   final String country;
   final double power;
   final double timeInSec;
-  final bool isPlayerResult;
 
   RankingItem({
     this.activityType,
@@ -82,6 +81,5 @@ class RankingItem {
     this.type = RankingItemRaceEventType.NPC,
     this.country = "POL",
     this.power = 1.0,
-    this.timeInSec,
-    this.isPlayerResult});
+    this.timeInSec});
 }
