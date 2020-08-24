@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/service/simulate_race_location_observer.dart';
-import 'package:flutterapp/widget/record_activity_widget.dart';
+import 'package:flutterapp/widget/record_activity/record_activity_widget.dart';
 import 'package:global_configuration/global_configuration.dart';
 
 void main() async {

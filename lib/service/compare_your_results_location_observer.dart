@@ -19,6 +19,7 @@ class CompareYourResultsLocationObserver extends AbstractActivityLocationObserve
   RecordActivityWidgetModel mapToModel(String responseJson) {
     return new RecordActivityWidgetModel(
         playerActivityService.model.totalDistance / 1000.0,
+        10.1,
         1,
         prepareSortedRankingItems(responseJson)
     );

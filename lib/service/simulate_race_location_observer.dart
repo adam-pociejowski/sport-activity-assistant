@@ -23,23 +23,23 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
         '$apiUrl/race/init',
         new RaceInitRequest(
             name: 'Race',
-            difficulty: 0.45,
+            difficulty: 0.5,
             stages: [
               new Stage(
                 distance: 10000.2,
                 abilitiesFactor: new RiderAbilities(
-                  flat: 1.0,
-                  mountain: 1.0,
-                  hill: 1.0,
-                  timeTrial: 1.0,
+                  flat: 0.7,
+                  mountain: 1.3,
+                  hill: 1.2,
+                  timeTrial: 0.8,
                 ),
                 activityType: ActivityType.OUTDOOR_RIDE,
               ),
             ],
             ridersAmount: 100,
             activityType: ActivityType.OUTDOOR_RIDE.toString(),
-            riderRaceConditionVariability: 0.1,
-            riderCurrentConditionVariability: 0.25,
+            riderRaceConditionVariability: 0.05,
+            riderCurrentConditionVariability: 0.2,
             maxRiderCurrentConditionChangePerEvent: 0.02,
             randomFactorVariability: 0.02,
             resultsScattering: 1.5)))));
@@ -67,6 +67,7 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
         .firstWhere((item) => item.itemType == RankingItemRaceEventType.USER_ACTIVITY);
     return new RecordActivityWidgetModel(
         playerActivityService.model.totalDistance / 1000.0,
+        10.1,
         playerItem == null ? 1 : ranking.indexOf(playerItem) + 1,
         ranking);
   }

@@ -2,12 +2,14 @@ import 'package:flutterapp/enums/activity_type.dart';
 import 'package:flutterapp/enums/ranking_item_race_event_type.dart';
 
 class RecordActivityWidgetModel {
-  final double currentDistanceInKm;
+  final double currentDistance;
+  final double overallDistance;
   final int currentPlayerPosition;
   final List<RecordActivityWidgetRankingItem> ranking;
 
   RecordActivityWidgetModel(
-      this.currentDistanceInKm,
+      this.currentDistance,
+      this.overallDistance,
       this.currentPlayerPosition,
       this.ranking);
 }

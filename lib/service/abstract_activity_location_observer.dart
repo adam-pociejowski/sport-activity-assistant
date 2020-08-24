@@ -6,7 +6,7 @@ import 'package:flutterapp/model/location/location_point.dart';
 import 'package:flutterapp/service/location/location_observer.dart';
 import 'package:flutterapp/service/player_activity_service.dart';
 import 'package:flutterapp/util/datetime_utils.dart';
-import 'package:flutterapp/widget/record_activity_widget.dart';
+import 'package:flutterapp/widget/record_activity/record_activity_widget.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:intl/intl.dart';
 import 'location/location_service.dart';
