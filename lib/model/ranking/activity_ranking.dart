@@ -5,10 +5,12 @@ part 'activity_ranking.g.dart';
 @JsonSerializable()
 class ActivityRanking {
   final List<ActivityRankingItem> ranking;
+  final String status;
   final double distance;
 
   ActivityRanking({
     this.ranking,
+    this.status,
     this.distance
   });
 

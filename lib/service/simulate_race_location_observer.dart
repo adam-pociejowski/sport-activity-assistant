@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:flutterapp/enums/activity_type.dart';
+import 'package:flutterapp/enums/race_status.dart';
 import 'package:flutterapp/enums/ranking_item_race_event_type.dart';
 import 'package:flutterapp/enums/ranking_type.dart';
 import 'package:flutterapp/model/activity/record_activity_widget_model.dart';
@@ -23,10 +24,20 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
         '$apiUrl/race/init',
         new RaceInitRequest(
             name: 'Race',
-            difficulty: 0.5,
+            difficulty: 0.52,
             stages: [
               new Stage(
-                distance: 10000.2,
+                distance: 150.2,
+                abilitiesFactor: new RiderAbilities(
+                  flat: 0.5,
+                  mountain: 1.9,
+                  hill: 1.1,
+                  timeTrial: 0.5,
+                ),
+                activityType: ActivityType.OUTDOOR_RIDE,
+              ),
+              new Stage(
+                distance: 5000.2,
                 abilitiesFactor: new RiderAbilities(
                   flat: 0.7,
                   mountain: 1.3,
@@ -39,10 +50,12 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
             ridersAmount: 100,
             activityType: ActivityType.OUTDOOR_RIDE.toString(),
             riderRaceConditionVariability: 0.05,
-            riderCurrentConditionVariability: 0.2,
-            maxRiderCurrentConditionChangePerEvent: 0.02,
+            riderCurrentConditionVariability: 0.15,
+            maxRiderCurrentConditionChangePerEvent: 0.015,
             randomFactorVariability: 0.02,
-            resultsScattering: 1.5)))));
+            resultsScattering: 1.0)))));
+
+    await HttpUtils.get('$apiUrl/race/${raceConfig.raceId}/stage/${raceConfig.stages[0].stageId}/start');
   }
 
   Future<void> afterLocationChanged(LocationPoint locationPoint) async {
@@ -50,25 +63,33 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
 //    playerActivityService.model.totalDistance += 100.0;
     var speed = 25.0;
     playerActivityService.model.totalDistance = speed * playerActivityService.getActivityMovingTime() / 3.6;
-    this.updateState(mapToModel((await HttpUtils.post(
-        '$apiUrl/race/update',
-        new UpdateRaceRequest(
-            raceId: this.raceConfig.raceId,
-            stageId: this.raceConfig.stages[0].stageId,
-            location: locationPoint,
-            time: playerActivityService.getActivityMovingTime(),
-            distance: playerActivityService.model.totalDistance,
-            rankingType: RankingType.PLAYER_NPC_WITH_HISTORY)))));
+
+    final ActivityRanking activityRanking = ActivityRanking
+        .fromJson(json.decode((await HttpUtils.post(
+         '$apiUrl/race/update',
+          new UpdateRaceRequest(
+              raceId: this.raceConfig.raceId,
+              stageId: this.raceConfig.stages[0].stageId,
+              location: locationPoint,
+              time: playerActivityService.getActivityMovingTime(),
+              distance: playerActivityService.model.totalDistance,
+              rankingType: RankingType.PLAYER_NPC_WITH_HISTORY)))));
+    var model = mapToModel(activityRanking);
+    this.updateState(model);
+    if (RaceStatus.findByName(activityRanking.status) == RaceStatus.FINISHED) {
+      this.finish(model);
+    }
   }
 
-  RecordActivityWidgetModel mapToModel(String responseJson) {
-    List<RecordActivityWidgetRankingItem> ranking = prepareSortedRankingItems(responseJson);
-    RecordActivityWidgetRankingItem playerItem = ranking
+  RecordActivityWidgetModel mapToModel(ActivityRanking activityRanking) {
+    final List<RecordActivityWidgetRankingItem> ranking = prepareSortedRankingItems(activityRanking);
+    final RecordActivityWidgetRankingItem playerItem = ranking
         .firstWhere((item) => item.itemType == RankingItemRaceEventType.USER_ACTIVITY);
     return new RecordActivityWidgetModel(
         playerActivityService.model.totalDistance / 1000.0,
-        10.1,
+        raceConfig.stages[0].distance / 1000.0,
         playerItem == null ? 1 : ranking.indexOf(playerItem) + 1,
+        RaceStatus.findByName(activityRanking.status),
         ranking);
   }
 
@@ -76,8 +97,8 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
     return rankingItems;
   }
 
-  List<RankingItem> mapToRankingItems(String responseJson) {
-    return ActivityRanking.fromJson(json.decode(responseJson))
+  List<RankingItem> mapToRankingItems(ActivityRanking activityRanking) {
+    return activityRanking
         .ranking
         .map((item) => new RankingItem(
             activityType: ActivityType.findByName(item.activityType),

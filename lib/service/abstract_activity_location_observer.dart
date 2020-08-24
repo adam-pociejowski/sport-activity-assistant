@@ -3,6 +3,7 @@ import 'package:flutterapp/enums/activity_type.dart';
 import 'package:flutterapp/enums/ranking_item_race_event_type.dart';
 import 'package:flutterapp/model/activity/record_activity_widget_model.dart';
 import 'package:flutterapp/model/location/location_point.dart';
+import 'package:flutterapp/model/ranking/activity_ranking.dart';
 import 'package:flutterapp/service/location/location_observer.dart';
 import 'package:flutterapp/service/player_activity_service.dart';
 import 'package:flutterapp/util/datetime_utils.dart';
@@ -23,7 +24,7 @@ abstract class AbstractActivityLocationObserver implements LocationObserver {
         .registerObserver(this);
   }
 
-  RecordActivityWidgetModel mapToModel(String responseJson);
+  RecordActivityWidgetModel mapToModel(ActivityRanking activityRanking);
 
   @mustCallSuper
   void init(State state) {
@@ -34,7 +35,7 @@ abstract class AbstractActivityLocationObserver implements LocationObserver {
 
   List<RankingItem> afterRankingMap(List<RankingItem> rankingItems);
 
-  List<RankingItem> mapToRankingItems(String responseJson);
+  List<RankingItem> mapToRankingItems(ActivityRanking activityRanking);
 
   Future<void> onLocationChanged(LocationPoint locationPoint) async {
     playerActivityService.addLocation(locationPoint);
@@ -45,8 +46,15 @@ abstract class AbstractActivityLocationObserver implements LocationObserver {
     this.state.updateState(model);
   }
 
-  List<RecordActivityWidgetRankingItem> prepareSortedRankingItems(String responseJson) {
-    final List<RankingItem> rankingItems = this.afterRankingMap(mapToRankingItems(responseJson));
+  void finish(RecordActivityWidgetModel model) {
+    LocationService
+        .INSTANCE
+        .unRegisterObserver(this);
+    this.state.finish(model);
+  }
+
+  List<RecordActivityWidgetRankingItem> prepareSortedRankingItems(ActivityRanking activityRanking) {
+    final List<RankingItem> rankingItems = this.afterRankingMap(mapToRankingItems(activityRanking));
     rankingItems.sort((RankingItem o1, RankingItem o2) => o1.timeInSec.compareTo(o2.timeInSec));
     return rankingItems
         .map((item) =>

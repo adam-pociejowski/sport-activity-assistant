@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/enums/ranking_item_race_event_type.dart';
 import 'package:flutterapp/model/activity/record_activity_widget_model.dart';
-import 'package:intl/intl.dart';
 
 class RecordActivityRankingItemWidget extends StatefulWidget {
   RecordActivityWidgetRankingItem item;

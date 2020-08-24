@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/enums/race_status.dart';
 import 'package:flutterapp/model/activity/record_activity_widget_model.dart';
 import 'package:flutterapp/service/abstract_activity_location_observer.dart';
 import 'package:flutterapp/widget/nav_drawer_widget.dart';
@@ -16,11 +17,12 @@ class RecordActivityWidget extends StatefulWidget {
 
 abstract class RecordActivityWidgetState extends State<RecordActivityWidget> {
   void updateState(RecordActivityWidgetModel model);
+  void finish(RecordActivityWidgetModel model);
 }
 
 class _RecordActivityWidgetState extends RecordActivityWidgetState {
   static var materialPalette = Colors.lime;
-  RecordActivityWidgetModel _model = new RecordActivityWidgetModel(0.0, 0.0, 0, new List<RecordActivityWidgetRankingItem>());
+  RecordActivityWidgetModel _model = new RecordActivityWidgetModel(0.0, 0.0, 0, RaceStatus.NOT_STARTED, new List<RecordActivityWidgetRankingItem>());
 
   void initState() {
     super.initState();
@@ -57,5 +59,9 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
     setState(() {
       _model = model;
     });
+  }
+
+  void finish(RecordActivityWidgetModel model) {
+    print("Finish");
   }
 }

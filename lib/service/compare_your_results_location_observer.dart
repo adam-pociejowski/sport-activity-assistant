@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutterapp/enums/activity_type.dart';
+import 'package:flutterapp/enums/race_status.dart';
 import 'package:flutterapp/enums/ranking_item_race_event_type.dart';
 import 'package:flutterapp/model/activity/record_activity_widget_model.dart';
 import 'package:flutterapp/model/location/location_point.dart';
@@ -13,15 +14,21 @@ class CompareYourResultsLocationObserver extends AbstractActivityLocationObserve
   Future<void> afterLocationChanged(LocationPoint locationPoint) async {
     print('$apiUrl/activity/ranking/$activityType/${playerActivityService.model.totalDistance}');
     playerActivityService.model.totalDistance += 100.0;
-    this.updateState(mapToModel((await http.get('$apiUrl/activity/ranking/$activityType/${playerActivityService.model.totalDistance}')).body));
+    this.updateState(
+        mapToModel(
+            ActivityRanking
+                .fromJson(
+                  json.decode(
+                      (await http.get('$apiUrl/activity/ranking/$activityType/${playerActivityService.model.totalDistance}')).body))));
   }
 
-  RecordActivityWidgetModel mapToModel(String responseJson) {
+  RecordActivityWidgetModel mapToModel(ActivityRanking activityRanking) {
     return new RecordActivityWidgetModel(
         playerActivityService.model.totalDistance / 1000.0,
         10.1,
         1,
-        prepareSortedRankingItems(responseJson)
+        RaceStatus.findByName(activityRanking.status),
+        prepareSortedRankingItems(activityRanking)
     );
   }
 
@@ -35,9 +42,8 @@ class CompareYourResultsLocationObserver extends AbstractActivityLocationObserve
     return rankingItems;
   }
 
-  List<RankingItem> mapToRankingItems(String responseJson) {
-    return ActivityRanking
-        .fromJson(json.decode(responseJson))
+  List<RankingItem> mapToRankingItems(ActivityRanking activityRanking) {
+    return activityRanking
         .ranking
         .map((item) =>
             new RankingItem(
