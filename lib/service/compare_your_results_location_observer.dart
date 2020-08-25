@@ -54,4 +54,6 @@ class CompareYourResultsLocationObserver extends AbstractActivityLocationObserve
             ))
         .toList();
   }
+
+  void afterUpdateRankingType() {}
 }

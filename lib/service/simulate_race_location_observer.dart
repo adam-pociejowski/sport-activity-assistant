@@ -11,38 +11,79 @@ import 'package:flutterapp/model/simulate/abilities_factor.dart';
 import 'package:flutterapp/model/simulate/race_config.dart';
 import 'package:flutterapp/model/simulate/race_init_request.dart';
 import 'package:flutterapp/model/simulate/stage.dart';
+import 'package:flutterapp/model/simulate/stage_config.dart';
 import 'package:flutterapp/model/simulate/update_race_request.dart';
 import 'package:flutterapp/service/abstract_activity_location_observer.dart';
 import 'package:flutterapp/util/htttp_utils.dart';
 
 class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
   RaceConfig raceConfig;
+  StageConfig stageConfig;
+
+  SimulateRaceLocationObserver(RaceConfig raceConfig) {
+    this.raceConfig = raceConfig;
+  }
 
   Future<void> init(State state) async {
     super.init(state);
-    this.raceConfig = RaceConfig.fromJson(json.decode((await HttpUtils.post(
+    if (raceConfig == null) {
+      raceConfig = await _initRace();
+    }
+    stageConfig = _findCurrentStage(raceConfig);
+    await HttpUtils.get('$apiUrl/race/${raceConfig.raceId}/stage/${stageConfig.stageId}/start');
+  }
+
+  StageConfig _findCurrentStage(RaceConfig raceConfig) {
+    return raceConfig
+        .stages
+        .where((element) => RaceStatus.findByName(element.status) != RaceStatus.FINISHED)
+        .first;
+  }
+
+  Future<RaceConfig> _initRace() async {
+    return RaceConfig.fromJson(json.decode((await HttpUtils.post(
         '$apiUrl/race/init',
         new RaceInitRequest(
             name: 'Race',
             difficulty: 0.52,
             stages: [
               new Stage(
-                distance: 150.2,
+                distance: 1500.2,
                 abilitiesFactor: new RiderAbilities(
-                  flat: 0.5,
-                  mountain: 1.9,
-                  hill: 1.1,
-                  timeTrial: 0.5,
+                  flat: 0.0,
+                  mountain: 0.0,
+                  hill: 0.0,
+                  timeTrial: 4.0,
                 ),
                 activityType: ActivityType.OUTDOOR_RIDE,
               ),
               new Stage(
-                distance: 5000.2,
+                distance: 3500.2,
                 abilitiesFactor: new RiderAbilities(
                   flat: 0.7,
                   mountain: 1.3,
-                  hill: 1.2,
-                  timeTrial: 0.8,
+                  hill: 2.0,
+                  timeTrial: 0.0,
+                ),
+                activityType: ActivityType.OUTDOOR_RIDE,
+              ),
+              new Stage(
+                distance: 4000.2,
+                abilitiesFactor: new RiderAbilities(
+                  flat: 0.0,
+                  mountain: 3.0,
+                  hill: 1.0,
+                  timeTrial: 0.0,
+                ),
+                activityType: ActivityType.OUTDOOR_RIDE,
+              ),
+              new Stage(
+                distance: 4000.2,
+                abilitiesFactor: new RiderAbilities(
+                  flat: 0.0,
+                  mountain: 4.0,
+                  hill: 0.0,
+                  timeTrial: 0.0,
                 ),
                 activityType: ActivityType.OUTDOOR_RIDE,
               ),
@@ -54,8 +95,6 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
             maxRiderCurrentConditionChangePerEvent: 0.015,
             randomFactorVariability: 0.02,
             resultsScattering: 1.0)))));
-
-    await HttpUtils.get('$apiUrl/race/${raceConfig.raceId}/stage/${raceConfig.stages[0].stageId}/start');
   }
 
   Future<void> afterLocationChanged(LocationPoint locationPoint) async {
@@ -64,16 +103,15 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
     var speed = 25.0;
     playerActivityService.model.totalDistance = speed * playerActivityService.getActivityMovingTime() / 3.6;
 
-    final ActivityRanking activityRanking = ActivityRanking
-        .fromJson(json.decode((await HttpUtils.post(
-         '$apiUrl/race/update',
-          new UpdateRaceRequest(
-              raceId: this.raceConfig.raceId,
-              stageId: this.raceConfig.stages[0].stageId,
-              location: locationPoint,
-              time: playerActivityService.getActivityMovingTime(),
-              distance: playerActivityService.model.totalDistance,
-              rankingType: RankingType.PLAYER_NPC_WITH_HISTORY)))));
+    final ActivityRanking activityRanking = ActivityRanking.fromJson(json.decode((await HttpUtils.post(
+        '$apiUrl/race/update',
+        new UpdateRaceRequest(
+            raceId: this.raceConfig.raceId,
+            stageId: this.stageConfig.stageId,
+            location: locationPoint,
+            time: playerActivityService.getActivityMovingTime(),
+            distance: playerActivityService.model.totalDistance,
+            rankingType: this.rankingType)))));
     var model = mapToModel(activityRanking);
     this.updateState(model);
     if (RaceStatus.findByName(activityRanking.status) == RaceStatus.FINISHED) {
@@ -83,14 +121,12 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
 
   RecordActivityWidgetModel mapToModel(ActivityRanking activityRanking) {
     final List<RecordActivityWidgetRankingItem> ranking = prepareSortedRankingItems(activityRanking);
-    final RecordActivityWidgetRankingItem playerItem = ranking
-        .firstWhere((item) => item.itemType == RankingItemRaceEventType.USER_ACTIVITY);
+    final RecordActivityWidgetRankingItem playerItem = ranking.firstWhere((item) => item.itemType == RankingItemRaceEventType.USER_ACTIVITY);
     return new RecordActivityWidgetModel(
         playerActivityService.model.totalDistance / 1000.0,
-        raceConfig.stages[0].distance / 1000.0,
+        stageConfig.distance / 1000.0,
         playerItem == null ? 1 : ranking.indexOf(playerItem) + 1,
-        RaceStatus.findByName(activityRanking.status),
-        ranking);
+        RaceStatus.findByName(activityRanking.status), ranking);
   }
 
   List<RankingItem> afterRankingMap(List<RankingItem> rankingItems) {
@@ -98,8 +134,7 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
   }
 
   List<RankingItem> mapToRankingItems(ActivityRanking activityRanking) {
-    return activityRanking
-        .ranking
+    return activityRanking.ranking
         .map((item) => new RankingItem(
             activityType: ActivityType.findByName(item.activityType),
             name: item.info['name'],
@@ -108,5 +143,13 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
             power: item.info['power'],
             timeInSec: item.timeInSec))
         .toList();
+  }
+
+  Future<void> afterUpdateRankingType() async {
+    final ActivityRanking activityRanking = ActivityRanking
+        .fromJson(
+              json.decode(
+                  (await HttpUtils.get("$apiUrl/ranking/${raceConfig.raceId}/${stageConfig.stageId}/${rankingType}"))));
+    this.updateState(mapToModel(activityRanking));
   }
 }

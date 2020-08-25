@@ -8,13 +8,11 @@ class RecordActivityStatsBarWidget extends StatefulWidget {
 
   RecordActivityStatsBarWidget(this.model, this.materialColor);
 
-  @override
   _RecordActivityStatsBarWidgetState createState() => _RecordActivityStatsBarWidgetState();
 }
 
 class _RecordActivityStatsBarWidgetState extends State<RecordActivityStatsBarWidget> {
 
-  @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10.0),

@@ -9,13 +9,11 @@ class RecordActivityRankingItemWidget extends StatefulWidget {
 
   RecordActivityRankingItemWidget(this.item, this.materialColor, this.position);
 
-  @override
   _RecordActivityRankingItemWidgetState createState() => _RecordActivityRankingItemWidgetState();
 }
 
 class _RecordActivityRankingItemWidgetState extends State<RecordActivityRankingItemWidget> {
 
-  @override
   Widget build(BuildContext context) {
     return Card(
       color: _decideWhichItemColor(widget.item.itemType),

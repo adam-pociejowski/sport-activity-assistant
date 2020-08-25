@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutterapp/enums/activity_type.dart';
 import 'package:flutterapp/enums/ranking_item_race_event_type.dart';
+import 'package:flutterapp/enums/ranking_type.dart';
 import 'package:flutterapp/model/activity/record_activity_widget_model.dart';
 import 'package:flutterapp/model/location/location_point.dart';
 import 'package:flutterapp/model/ranking/activity_ranking.dart';
@@ -15,6 +16,7 @@ import 'location/location_service.dart';
 abstract class AbstractActivityLocationObserver implements LocationObserver {
   final apiUrl = GlobalConfiguration().getString("sport_activity_api_url");
   final playerActivityService = new PlayerActivityService();
+  RankingType rankingType = RankingType.PLAYER_NPC;
   RecordActivityWidgetState state;
   var activityType = ActivityType.OUTDOOR_RIDE;
 
@@ -31,9 +33,16 @@ abstract class AbstractActivityLocationObserver implements LocationObserver {
     this.state = state;
   }
 
+  updateRankingType(RankingType rankingType) {
+    this.rankingType = rankingType;
+    afterUpdateRankingType();
+  }
+
   void afterLocationChanged(LocationPoint locationPoint);
 
   List<RankingItem> afterRankingMap(List<RankingItem> rankingItems);
+
+   void afterUpdateRankingType();
 
   List<RankingItem> mapToRankingItems(ActivityRanking activityRanking);
 
