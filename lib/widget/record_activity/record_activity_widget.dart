@@ -9,8 +9,9 @@ import 'package:flutterapp/widget/record_activity/record_activity_stats_bar_widg
 
 class RecordActivityWidget extends StatefulWidget {
   final AbstractActivityLocationObserver observer;
+  final Color materialPalette;
 
-  RecordActivityWidget(this.observer);
+  RecordActivityWidget(this.observer, this.materialPalette);
 
   _RecordActivityWidgetState createState() => _RecordActivityWidgetState();
 }
@@ -21,7 +22,6 @@ abstract class RecordActivityWidgetState extends State<RecordActivityWidget> {
 }
 
 class _RecordActivityWidgetState extends RecordActivityWidgetState {
-  static var materialPalette = Colors.lime;
   RecordActivityWidgetModel _model = new RecordActivityWidgetModel(0.0, 0.0, 0, RaceStatus.NOT_STARTED, new List<RecordActivityWidgetRankingItem>());
   callback(newRankingType) {
     setState(() {
@@ -37,21 +37,21 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: NavDrawerWidget(),
+      drawer: NavDrawerWidget(widget.materialPalette),
       appBar: AppBar(
         title: Text('Record activity'),
       ),
       body: Center(
         child: Column(
           children: <Widget>[
-            RecordActivityStatsBarWidget(_model, materialPalette),
-            RecordActivityRankingTypeBarWidget(callback, materialPalette),
+            RecordActivityStatsBarWidget(_model, widget.materialPalette),
+            RecordActivityRankingTypeBarWidget(callback, widget.materialPalette),
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.all(5.0),
                 itemCount: _model.ranking.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return RecordActivityRankingItemWidget(_model.ranking[index], materialPalette, index + 1);
+                  return RecordActivityRankingItemWidget(_model.ranking[index], widget.materialPalette, index + 1);
                 },
               ),
             )

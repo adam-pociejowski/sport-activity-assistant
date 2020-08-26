@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutterapp/enums/activity_type.dart';
 import 'package:flutterapp/enums/race_status.dart';
 import 'package:flutterapp/enums/ranking_item_race_event_type.dart';
-import 'package:flutterapp/enums/ranking_type.dart';
 import 'package:flutterapp/model/activity/record_activity_widget_model.dart';
 import 'package:flutterapp/model/location/location_point.dart';
 import 'package:flutterapp/model/ranking/activity_ranking.dart';
@@ -14,7 +13,7 @@ import 'package:flutterapp/model/simulate/stage.dart';
 import 'package:flutterapp/model/simulate/stage_config.dart';
 import 'package:flutterapp/model/simulate/update_race_request.dart';
 import 'package:flutterapp/service/abstract_activity_location_observer.dart';
-import 'package:flutterapp/util/htttp_utils.dart';
+import 'package:flutterapp/util/http_utils.dart';
 
 class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
   RaceConfig raceConfig;
@@ -45,43 +44,33 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
         '$apiUrl/race/init',
         new RaceInitRequest(
             name: 'Race',
-            difficulty: 0.52,
+            difficulty: 0.55,
             stages: [
               new Stage(
-                distance: 1500.2,
+                distance: 3000.0,
                 abilitiesFactor: new RiderAbilities(
                   flat: 0.0,
                   mountain: 0.0,
                   hill: 0.0,
-                  timeTrial: 4.0,
+                  timeTrial: 2.0,
                 ),
                 activityType: ActivityType.OUTDOOR_RIDE,
               ),
               new Stage(
-                distance: 3500.2,
+                distance: 12000.0,
                 abilitiesFactor: new RiderAbilities(
-                  flat: 0.7,
-                  mountain: 1.3,
-                  hill: 2.0,
+                  flat: 0.0,
+                  mountain: 0.7,
+                  hill: 0.8,
                   timeTrial: 0.0,
                 ),
                 activityType: ActivityType.OUTDOOR_RIDE,
               ),
               new Stage(
-                distance: 4000.2,
+                distance: 15000.0,
                 abilitiesFactor: new RiderAbilities(
                   flat: 0.0,
-                  mountain: 3.0,
-                  hill: 1.0,
-                  timeTrial: 0.0,
-                ),
-                activityType: ActivityType.OUTDOOR_RIDE,
-              ),
-              new Stage(
-                distance: 4000.2,
-                abilitiesFactor: new RiderAbilities(
-                  flat: 0.0,
-                  mountain: 4.0,
+                  mountain: 1.7,
                   hill: 0.0,
                   timeTrial: 0.0,
                 ),
@@ -90,8 +79,8 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
             ],
             ridersAmount: 100,
             activityType: ActivityType.OUTDOOR_RIDE.toString(),
-            riderRaceConditionVariability: 0.05,
-            riderCurrentConditionVariability: 0.15,
+            riderRaceConditionVariability: 0.04,
+            riderCurrentConditionVariability: 0.1,
             maxRiderCurrentConditionChangePerEvent: 0.015,
             randomFactorVariability: 0.02,
             resultsScattering: 1.0)))));
@@ -99,10 +88,10 @@ class SimulateRaceLocationObserver extends AbstractActivityLocationObserver {
 
   Future<void> afterLocationChanged(LocationPoint locationPoint) async {
     print('$apiUrl/race/update, distance: ${playerActivityService.model.totalDistance}, raceId: ${this.raceConfig.raceId}');
-//    playerActivityService.model.totalDistance += 100.0;
-    var speed = 25.0;
-    playerActivityService.model.totalDistance = speed * playerActivityService.getActivityMovingTime() / 3.6;
-
+    if (profile == "dev") {
+      var speed = 29.0;
+      playerActivityService.model.totalDistance = speed * playerActivityService.getActivityMovingTime() / 3.6;
+    }
     final ActivityRanking activityRanking = ActivityRanking.fromJson(json.decode((await HttpUtils.post(
         '$apiUrl/race/update',
         new UpdateRaceRequest(

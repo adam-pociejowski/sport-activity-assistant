@@ -15,6 +15,7 @@ import 'location/location_service.dart';
 
 abstract class AbstractActivityLocationObserver implements LocationObserver {
   final apiUrl = GlobalConfiguration().getString("sport_activity_api_url");
+  final profile = GlobalConfiguration().getString("profile");
   final playerActivityService = new PlayerActivityService();
   RankingType rankingType = RankingType.PLAYER_NPC;
   RecordActivityWidgetState state;
