@@ -45,7 +45,7 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
         child: Column(
           children: <Widget>[
             RecordActivityStatsBarWidget(_model, widget.materialPalette),
-            RecordActivityRankingTypeBarWidget(callback, widget.materialPalette),
+            RecordActivityRankingTypeBarWidget(callback, widget.materialPalette, widget.observer.rankingType),
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.all(5.0),
