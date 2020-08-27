@@ -7,6 +7,7 @@ import 'package:flutterapp/model/location/location_point.dart';
 import 'package:flutterapp/model/ranking/activity_ranking.dart';
 import 'package:flutterapp/service/location/location_observer.dart';
 import 'package:flutterapp/service/player_activity_service.dart';
+import 'package:flutterapp/service/race_rest_service.dart';
 import 'package:flutterapp/util/datetime_utils.dart';
 import 'package:flutterapp/widget/record_activity/record_activity_widget.dart';
 import 'package:global_configuration/global_configuration.dart';
@@ -14,9 +15,9 @@ import 'package:intl/intl.dart';
 import 'location/location_service.dart';
 
 abstract class AbstractActivityLocationObserver implements LocationObserver {
-  final apiUrl = GlobalConfiguration().getString("sport_activity_api_url");
   final profile = GlobalConfiguration().getString("profile");
   final playerActivityService = new PlayerActivityService();
+  final raceRestService = new RaceRestService();
   RankingType rankingType = RankingType.PLAYER_NPC;
   RecordActivityWidgetState state;
   var activityType = ActivityType.OUTDOOR_RIDE;

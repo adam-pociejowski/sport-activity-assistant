@@ -12,16 +12,16 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final MaterialColor materialPalette = Colors.cyan;
+  final MaterialColor materialPalette = Colors.grey;
 
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sport Activity Assistant',
       theme: ThemeData(
-        primaryColor: Colors.grey,
+        primaryColor: Colors.white,
       ),
-//      home: RecordActivityWidget(new SimulateRaceLocationObserver(null), materialPalette),
-      home: RaceListWidget(materialPalette),
+      home: RecordActivityWidget(new SimulateRaceLocationObserver(null), materialPalette),
+//      home: RaceListWidget(materialPalette),
 //      home: DashboardWidget(materialPalette),
     );
   }

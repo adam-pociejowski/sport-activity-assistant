@@ -1,12 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/enums/race_status.dart';
 import 'package:flutterapp/model/simulate/race_config.dart';
+import 'package:flutterapp/service/race_rest_service.dart';
 import 'package:flutterapp/service/simulate_race_location_observer.dart';
-import 'package:flutterapp/util/http_utils.dart';
 import 'package:flutterapp/widget/nav_drawer_widget.dart';
 import 'package:flutterapp/widget/record_activity/record_activity_widget.dart';
-import 'package:global_configuration/global_configuration.dart';
 import 'package:imagebutton/imagebutton.dart';
 
 class RaceListWidget extends StatefulWidget {
@@ -18,7 +16,7 @@ class RaceListWidget extends StatefulWidget {
 }
 
 class _RaceListWidgetState extends State<RaceListWidget> {
-  final apiUrl = GlobalConfiguration().getString("sport_activity_api_url");
+  final raceRestService = new RaceRestService();
   List<RaceConfig> races;
 
   void initState() {
@@ -85,12 +83,8 @@ class _RaceListWidgetState extends State<RaceListWidget> {
     );
   }
 
-  void _findRaceConfigs() async {
-    final Iterable iterable = json.decode(await HttpUtils.get('$apiUrl/race/list'));
-    final List<RaceConfig> races = iterable
-        .map((model) => RaceConfig.fromJson(model))
-        .toList();
-    races.sort((RaceConfig c1, RaceConfig c2) => c2.generateDate.compareTo(c1.generateDate));
+  Future<void> _findRaceConfigs() async {
+    final List<RaceConfig> races = await raceRestService.getAllRaces();
     setState(() {
       this.races = races;
     });
