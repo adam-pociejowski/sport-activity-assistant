@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/core/enums/app_config.dart';
 import 'package:flutterapp/record_activity/model/record_activity_widget_model.dart';
 import 'package:intl/intl.dart';
 
 class RecordActivityStatsBarWidget extends StatefulWidget {
   final RecordActivityWidgetModel model;
-  final MaterialColor materialColor;
 
-  RecordActivityStatsBarWidget(this.model, this.materialColor);
+  RecordActivityStatsBarWidget(this.model);
 
   _RecordActivityStatsBarWidgetState createState() => _RecordActivityStatsBarWidgetState();
 }
@@ -16,7 +16,7 @@ class _RecordActivityStatsBarWidgetState extends State<RecordActivityStatsBarWid
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10.0),
-      color: widget.materialColor.shade300,
+      color: AppConfig.MATERIAL_PALETTE.shade300,
       child: Row(
         children: <Widget>[
           Expanded(

@@ -5,9 +5,8 @@ import 'package:flutterapp/race/widget/race_list_widget.dart';
 import 'package:flutterapp/record_activity/widget/record_activity_widget.dart';
 
 class NavDrawerWidget extends StatelessWidget {
-  final MaterialColor materialPalette;
 
-  NavDrawerWidget(this.materialPalette);
+  NavDrawerWidget();
 
   Widget build(BuildContext context) {
     return Drawer(
@@ -31,7 +30,7 @@ class NavDrawerWidget extends StatelessWidget {
             onTap: () => {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => DashboardWidget(materialPalette)),
+                MaterialPageRoute(builder: (context) => DashboardWidget()),
               ),
             },
           ),
@@ -41,7 +40,7 @@ class NavDrawerWidget extends StatelessWidget {
             onTap: () => {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => RecordActivityWidget(new CompareYourResultsLocationObserver(), materialPalette)),
+                MaterialPageRoute(builder: (context) => RecordActivityWidget(new CompareYourResultsLocationObserver())),
               ),
             },
           ),
@@ -51,7 +50,7 @@ class NavDrawerWidget extends StatelessWidget {
             onTap: () => {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => RaceListWidget(materialPalette)),
+                MaterialPageRoute(builder: (context) => RaceListWidget()),
               ),
             },
           ),

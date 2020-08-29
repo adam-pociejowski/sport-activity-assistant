@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/core/enums/app_config.dart';
 import 'package:flutterapp/core/enums/ranking_item_race_event_type.dart';
 import 'package:flutterapp/record_activity/model/record_activity_widget_model.dart';
 
 class RecordActivityRankingItemWidget extends StatefulWidget {
   final RecordActivityWidgetRankingItem item;
-  final MaterialColor materialPalette;
   final int position;
 
-  RecordActivityRankingItemWidget(this.item, this.materialPalette, this.position);
+  RecordActivityRankingItemWidget(this.item, this.position);
 
   _RecordActivityRankingItemWidgetState createState() => _RecordActivityRankingItemWidgetState();
 }
@@ -35,11 +35,11 @@ class _RecordActivityRankingItemWidgetState extends State<RecordActivityRankingI
   Color _decideWhichItemColor(RankingItemRaceEventType type) {
     switch (type) {
       case RankingItemRaceEventType.USER_ACTIVITY:
-        return widget.materialPalette.shade300;
+        return AppConfig.MATERIAL_PALETTE.shade300;
       case RankingItemRaceEventType.USER_OLD_ACTIVITY:
-        return widget.materialPalette.shade200;
+        return AppConfig.MATERIAL_PALETTE.shade200;
       default:
-        return widget.materialPalette.shade100;
+        return AppConfig.MATERIAL_PALETTE.shade100;
     }
   }
 

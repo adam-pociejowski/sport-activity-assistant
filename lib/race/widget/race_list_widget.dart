@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/core/enums/app_config.dart';
 import 'package:flutterapp/core/enums/race_status.dart';
 import 'package:flutterapp/race/model/race_config.dart';
 import 'package:flutterapp/race/service/race_rest_service.dart';
@@ -8,9 +9,8 @@ import 'package:flutterapp/record_activity/widget/record_activity_widget.dart';
 import 'package:imagebutton/imagebutton.dart';
 
 class RaceListWidget extends StatefulWidget {
-  final MaterialColor materialPalette;
 
-  RaceListWidget(this.materialPalette);
+  RaceListWidget();
 
   _RaceListWidgetState createState() => _RaceListWidgetState();
 }
@@ -26,7 +26,7 @@ class _RaceListWidgetState extends State<RaceListWidget> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: NavDrawerWidget(widget.materialPalette),
+      drawer: NavDrawerWidget(),
       appBar: AppBar(
         title: Text('Choose activity type'),
       ),
@@ -43,15 +43,15 @@ class _RaceListWidgetState extends State<RaceListWidget> {
                 itemBuilder: (BuildContext context, int index) {
                   return _prepareActivityTypeRow(
                       index + 1,
-                      widget.materialPalette,
+                      AppConfig.MATERIAL_PALETTE,
                       races[index],
-                          () => RecordActivityWidget(new SimulateRaceLocationObserver(races[index]), widget.materialPalette));
+                          () => RecordActivityWidget(new SimulateRaceLocationObserver(races[index])));
                 },
               ),
             ),
             Container(
               padding: const EdgeInsets.all(0.0),
-              color: widget.materialPalette.shade600,
+              color: AppConfig.MATERIAL_PALETTE.shade600,
               child: Row(
                   children: <Widget>[
                     Expanded(
@@ -61,7 +61,7 @@ class _RaceListWidgetState extends State<RaceListWidget> {
                           SizedBox(
                             width: double.infinity,
                             child: RaisedButton(
-                              color: widget.materialPalette.shade600,
+                              color: AppConfig.MATERIAL_PALETTE.shade600,
                               onPressed: () {},
                               child: const Text(
                                   'NEW RACE',

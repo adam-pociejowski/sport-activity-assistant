@@ -9,9 +9,8 @@ import 'package:flutterapp/record_activity/widget/record_activity_stats_bar_widg
 
 class RecordActivityWidget extends StatefulWidget {
   final AbstractActivityLocationObserver observer;
-  final Color materialPalette;
 
-  RecordActivityWidget(this.observer, this.materialPalette);
+  RecordActivityWidget(this.observer);
 
   _RecordActivityWidgetState createState() => _RecordActivityWidgetState();
 }
@@ -37,21 +36,21 @@ class _RecordActivityWidgetState extends RecordActivityWidgetState {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: NavDrawerWidget(widget.materialPalette),
+      drawer: NavDrawerWidget(),
       appBar: AppBar(
         title: Text('Record activity'),
       ),
       body: Center(
         child: Column(
           children: <Widget>[
-            RecordActivityStatsBarWidget(_model, widget.materialPalette),
-            RecordActivityRankingTypeBarWidget(callback, widget.materialPalette, widget.observer.rankingType),
+            RecordActivityStatsBarWidget(_model),
+            RecordActivityRankingTypeBarWidget(callback, widget.observer.rankingType),
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.all(5.0),
                 itemCount: _model.ranking.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return RecordActivityRankingItemWidget(_model.ranking[index], widget.materialPalette, index + 1);
+                  return RecordActivityRankingItemWidget(_model.ranking[index], index + 1);
                 },
               ),
             )

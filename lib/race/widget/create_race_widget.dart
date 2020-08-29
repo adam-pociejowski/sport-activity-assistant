@@ -1,57 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/core/enums/activity_type.dart';
+import 'package:flutterapp/core/model/custom_form_field.dart';
 import 'package:flutterapp/navigation/widget/nav_drawer_widget.dart';
-import 'package:global_configuration/global_configuration.dart';
+import 'package:flutterapp/race/builder/race_init_builder.dart';
+import 'package:flutterapp/race/widget/create_race_stage_widget.dart';
+import 'abstract_create_race_widget.dart';
 
 class CreateRaceWidget extends StatefulWidget {
-  final MaterialColor materialPalette;
 
-  CreateRaceWidget(this.materialPalette);
+  CreateRaceWidget();
 
   _CreateRaceWidgetState createState() => _CreateRaceWidgetState();
 }
 
-class _CreateRaceWidgetState extends State<CreateRaceWidget> {
-  final apiUrl = GlobalConfiguration().getString("sport_activity_api_url");
-  final _formKey = GlobalKey<FormState>();
-  final Map<_FormField, TextEditingController> textControllers = {};
+class _CreateRaceWidgetState extends AbstractCreateStageWidgetState<CreateRaceWidget> {
+  final raceInitBuilder = new RaceInitBuilder();
+  static final nameField = new CustomFormField('NAME', 'String', 'Race name', 'Race');
+  static final difficultyField = new CustomFormField('DIFFICULTY', 'number', 'Difficulty level (0-1)', '0.5');
+  static final ridersAmountField = new CustomFormField('RIDERS_AMOUNT', 'number', 'Riders amount', '200');
+  static final ridersRaceConditionFVariabilityField = new CustomFormField('RIDERS_RACE_CONDITION_VARIABILITY', 'number', 'Race condition variability', '0.05');
+  static final ridersCurrentConditionFVariabilityField = new CustomFormField('RIDERS_CURRENT_CONDITION_VARIABILITY', 'number', 'Current condition variability', '0.15');
+  static final ridersConditionChangePerEventField = new CustomFormField('RIDERS_CONDITION_CHANGE_PER_EVENT', 'number', 'Max condition change per event', '0.02');
+  static final randomFactorField = new CustomFormField('RANDOM_FACTOR', 'number', 'Random factor', '0.02');
+  static final resultsScatteringField = new CustomFormField('RESULTS_SCATTERING', 'number', 'Results scattering', '0.8');
 
-  void initState() {
-    super.initState();
-  }
+  _CreateRaceWidgetState() : super([
+    nameField,
+    difficultyField,
+    ridersAmountField,
+    ridersRaceConditionFVariabilityField,
+    ridersCurrentConditionFVariabilityField,
+    ridersConditionChangePerEventField,
+    randomFactorField,
+    resultsScatteringField,
+  ]);
 
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: NavDrawerWidget(widget.materialPalette),
+      drawer: NavDrawerWidget(),
       appBar: AppBar(
         title: Text('Create new race'),
       ),
       body: Center(
         child: Form(
-          key: _formKey,
+          key: formKey,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                _prepareTextField(_FormField.NAME),
-                _prepareTextField(_FormField.DIFFICULTY),
-                _prepareTextField(_FormField.RIDERS_AMOUNT),
-                _prepareTextField(_FormField.RIDERS_RACE_CONDITION_VARIABILITY),
-                _prepareTextField(_FormField.RIDERS_CURRENT_CONDITION_VARIABILITY),
-                _prepareTextField(_FormField.RIDERS_CONDITION_CHANGE_PER_EVENT),
-                _prepareTextField(_FormField.RANDOM_FACTOR),
-                _prepareTextField(_FormField.RESULTS_SCATTERING),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: RaisedButton(
-                    onPressed: () {
-                      if (_formKey.currentState.validate()) {
-                        print(_formKey.currentState.toString());
-                      }
-                    },
-                    child: Text('Confirm'),
-                  ),
-                ),
-              ],
+              children: appendSubmitButton(prepareTextFields())
             ),
           ),
         ),
@@ -59,41 +55,21 @@ class _CreateRaceWidgetState extends State<CreateRaceWidget> {
     );
   }
 
-  TextFormField _prepareTextField(_FormField field) {
-    return TextFormField(
-      keyboardType: field.type == 'String' ? TextInputType.text : TextInputType.number,
-      controller: textControllers.putIfAbsent(field, () => TextEditingController(text: field.defaultValue)),
-      decoration: InputDecoration(
-        labelText: field.label,
-      ),
-      validator: (value) {
-        if (value.isEmpty) {
-          return 'This field is required';
-        }
-        return null;
-      },
+  void doAfterValidatedFormSubmitted() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>
+            CreateRaceStageWidget(
+                raceInitBuilder
+                      .name(textControllers[nameField].text)
+                      .difficulty(double.parse(textControllers[difficultyField].text))
+                      .ridersAmount(int.parse(textControllers[ridersAmountField].text))
+                      .activityType(ActivityType.OUTDOOR_RIDE.toString())
+                      .riderRaceConditionVariability(double.parse(textControllers[ridersRaceConditionFVariabilityField].text))
+                      .riderCurrentConditionVariability(double.parse(textControllers[ridersCurrentConditionFVariabilityField].text))
+                      .maxRiderCurrentConditionChangePerEvent(double.parse(textControllers[ridersConditionChangePerEventField].text))
+                      .randomFactorVariability(double.parse(textControllers[randomFactorField].text))
+                      .resultsScattering(double.parse(textControllers[resultsScatteringField].text))))
     );
-  }
-}
-
-class _FormField {
-  static const _FormField NAME = _FormField._('NAME', 'String', 'Race name', 'Race');
-  static const _FormField DIFFICULTY = _FormField._('DIFFICULTY', 'number', 'Difficulty level (0-1)', '0.5');
-  static const _FormField RIDERS_AMOUNT = _FormField._('RIDERS_AMOUNT', 'number', 'Riders amount', '200');
-  static const _FormField RIDERS_RACE_CONDITION_VARIABILITY = _FormField._('RIDERS_RACE_CONDITION_VARIABILITY', 'number', 'Race condition variability', '0.05');
-  static const _FormField RIDERS_CURRENT_CONDITION_VARIABILITY = _FormField._('RIDERS_CURRENT_CONDITION_VARIABILITY', 'number', 'Current condition variability', '0.15');
-  static const _FormField RIDERS_CONDITION_CHANGE_PER_EVENT = _FormField._('RIDERS_CONDITION_CHANGE_PER_EVENT', 'number', 'Max condition change per event', '0.02');
-  static const _FormField RANDOM_FACTOR = _FormField._('RANDOM_FACTOR', 'number', 'Random factor', '0.02');
-  static const _FormField RESULTS_SCATTERING = _FormField._('RESULTS_SCATTERING', 'number', 'Results scattering', '0.8');
-
-  final String _name;
-  final String label;
-  final String type;
-  final String defaultValue;
-
-  const _FormField._(this._name, this.type, this.label, this.defaultValue);
-
-  String toString() {
-    return _name;
   }
 }

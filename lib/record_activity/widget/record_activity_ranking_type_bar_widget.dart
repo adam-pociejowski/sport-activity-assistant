@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/core/enums/app_config.dart';
 import 'package:flutterapp/core/enums/ranking_type.dart';
 
 class RecordActivityRankingTypeBarWidget extends StatefulWidget {
-  final MaterialColor materialPalette;
   final Function rankingTypeCallback;
   final RankingType rankingType;
 
-  RecordActivityRankingTypeBarWidget(this.rankingTypeCallback, this.materialPalette, this.rankingType);
+  RecordActivityRankingTypeBarWidget(this.rankingTypeCallback, this.rankingType);
 
   _RecordActivityRankingTypeBarWidgetState createState() => _RecordActivityRankingTypeBarWidgetState();
 }
@@ -17,7 +17,7 @@ class _RecordActivityRankingTypeBarWidgetState extends State<RecordActivityRanki
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(0.0),
-      color: widget.materialPalette.shade300,
+      color: AppConfig.MATERIAL_PALETTE.shade300,
       child: Row(
         children: <Widget>[
           Expanded(
@@ -81,7 +81,7 @@ class _RecordActivityRankingTypeBarWidgetState extends State<RecordActivityRanki
 
   Color _chooseButtonColor(RankingType buttonRankingType, RankingType selectedRankingType) {
     return buttonRankingType == selectedRankingType ?
-            widget.materialPalette.shade400 :
-            widget.materialPalette.shade50;
+            AppConfig.MATERIAL_PALETTE.shade400 :
+            AppConfig.MATERIAL_PALETTE.shade50;
   }
 }
